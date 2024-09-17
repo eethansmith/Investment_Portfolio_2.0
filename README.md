@@ -1,5 +1,6 @@
 # Investment_Portfolio_2.0
 Remastered Version of Investment Portfolio Project utilsing streamlit
+https://eethansmith-investment-portfolio-2.streamlit.app/
 
 # Navigate to your project directory
 cd /path/to/your/project/directory
