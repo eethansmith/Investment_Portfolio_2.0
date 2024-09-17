@@ -1,14 +1,16 @@
 import json
 from pathlib import Path
 import yfinance as yf
-import streamlit as st
 import pandas as pd
+import streamlit as st
+
+import plotly.express as px
 
 # Set the title of the app
 st.title('Current Stock Holdings')
 
 # Define the path to the JSON file
-json_file_path = Path(__file__).parent / 'data' / 'investments_data.json'
+json_file_path = 'data/investment_data.json'
 
 # Open the JSON file and load its content
 with open(json_file_path, 'r') as file:
@@ -93,8 +95,6 @@ filtered_df = df[df['Ticker'].isin(selected_tickers)]
 
 # Display the filtered DataFrame
 st.dataframe(filtered_df)
-
-import plotly.express as px
 
 # Create a bar chart for Profit/Loss Percentage
 fig = px.bar(df, x='Ticker', y='P/L %', color='P/L %', title='Profit/Loss Percentage by Ticker')

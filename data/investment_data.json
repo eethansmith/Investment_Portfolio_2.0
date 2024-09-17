@@ -2518,5 +2518,19 @@
         "Average Cost per Share USD": 65.88,
         "Realized Gain/Loss USD": -15.743870169999994,
         "Portfolio Valuation USD": 5675.5102900052
+    },
+    {
+        "Transaction Type": "BUY",
+        "Date": "06-10-2024",
+        "Time": "00:00",
+        "Ticker Symbol": "NVDA",
+        "No. of Shares": "1.32577776",
+        "Price per Share USD": "$0",
+        "Image Filename": "IMG_0000.PNG",
+        "Transaction Valuation USD": 0.0,
+        "Overall Holdings": 1.4730864,
+        "Average Cost per Share USD": 42.62,
+        "Realized Gain/Loss USD": 0,
+        "Portfolio Valuation USD": 5738.2902900052
     }
 ]
