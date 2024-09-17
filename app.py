@@ -17,7 +17,24 @@ json_file_path = Path(__file__).parent / 'data' / 'investment_data.json'
 with open(json_file_path, 'r') as file:
     transactions_data = json.load(file)
 
-# Existing code to process current holdings and display portfolio...
+# --- Process Transactions to Determine Current Holdings ---
+holdings = {}
+latest_average_costs = {}
+for transaction in transactions_data:
+    ticker = transaction["Ticker Symbol"]
+    shares = float(transaction["No. of Shares"])
+    transaction_type = transaction["Transaction Type"]
+    avg_cost = float(transaction["Average Cost per Share USD"])
+
+    if ticker not in holdings:
+        holdings[ticker] = 0.0
+
+    # Adjust shares based on transaction type
+    holdings[ticker] += shares if transaction_type == "BUY" else -shares
+    latest_average_costs[ticker] = avg_cost  # Update with the latest average cost
+
+# Filter out stocks where holdings are zero or negative
+holdings = {k: v for k, v in holdings.items() if v > 0}
 
 # --- Function to Get Stock History ---
 def get_stock_history(ticker):
