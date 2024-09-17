@@ -120,7 +120,7 @@ if historical_df is not None and not historical_df.empty:
         x=historical_df['Date'],
         y=historical_df['Value'],
         name='Value of Holdings',
-        line=dict(color='blue')
+        line=dict(color='#FF4B4B')
     ))
 
     # Add "Value Invested" line
@@ -128,7 +128,7 @@ if historical_df is not None and not historical_df.empty:
         x=historical_df['Date'],
         y=historical_df['Value Paid'],
         name='Value Invested',
-        line=dict(color='green', dash='dash')
+        line=dict(color='#FAFAFA')
     ))
 
     # Update layout without dual y-axes
