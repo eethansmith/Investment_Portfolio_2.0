@@ -131,6 +131,14 @@ historical_df = get_stock_history(selected_stock)
 if historical_df is not None and not historical_df.empty:
     # Plot Value of Holdings and Value Invested over time on the same y-axis
     fig = go.Figure()
+    
+    # Add "Value Invested" line
+    fig.add_trace(go.Scatter(
+        x=historical_df['Date'],
+        y=historical_df['Value Paid'],
+        name='Value Invested',
+        line=dict(color='#FAFAFA')
+    ))
 
     # Add "Value of Holdings" line
     fig.add_trace(go.Scatter(
@@ -138,14 +146,6 @@ if historical_df is not None and not historical_df.empty:
         y=historical_df['Value'],
         name='Value of Holdings',
         line=dict(color='#FF4B4B')
-    ))
-
-    # Add "Value Invested" line
-    fig.add_trace(go.Scatter(
-        x=historical_df['Date'],
-        y=historical_df['Value Paid'],
-        name='Value Invested',
-        line=dict(color='#FAFAFA')
     ))
 
     # Update layout without dual y-axes
