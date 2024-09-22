@@ -34,7 +34,7 @@ for transaction in transactions_data:
     latest_average_costs[ticker] = avg_cost  # Update with the latest average cost
 
 # Filter out stocks where holdings are zero or negative
-holdings = {k: v for k, v in holdings.items() if v > 0}
+holdings = {k: v for k, v in holdings.items() if v > 0.001}
 
 # --- Function to Get Stock History ---
 def get_stock_history(ticker):
@@ -120,8 +120,9 @@ def get_stock_history(ticker):
 
     return historical_df
 # --- Integrate into the Streamlit App ---
-# Get a list of unique tickers
-tickers = list(set([t['Ticker Symbol'] for t in transactions_data]))
+# Get a list of tickers with holdings over 0.001 shares
+tickers = list(holdings.keys())
+
 
 # Add a dropdown to select a stock
 selected_stock = st.selectbox('Select a Stock to View Holdings History', options=tickers)
