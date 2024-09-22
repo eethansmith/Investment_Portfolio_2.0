@@ -61,7 +61,7 @@ name_to_ticker = {name: ticker for ticker, name in ticker_to_name.items()}
 
 
 # Add a dropdown to select a stock using company names
-selected_name = st.selectbox('Select a Stock to View Holdings History', options=sorted(name_to_ticker.keys()))
+selected_name = st.selectbox('Select a Stock to View Holdings', options=sorted(name_to_ticker.keys()))
 selected_stock = name_to_ticker[selected_name]
 
 # Get the stock history
