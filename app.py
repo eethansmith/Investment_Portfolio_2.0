@@ -38,11 +38,7 @@ for transaction in transactions_data:
 # Filter out stocks where holdings are zero or negative
 holdings = {k: v for k, v in holdings.items() if v > 0.001}
 
-# --- Integrate into the Streamlit App ---
-# Get a list of tickers with holdings over 0.001 shares
-tickers = list(holdings.keys())
-
-# Map tickers to company names
+# --- Map Tickers to Company Names ---
 @st.cache_data
 def get_ticker_to_name(tickers):
     ticker_to_name = {}
@@ -56,12 +52,80 @@ def get_ticker_to_name(tickers):
         ticker_to_name[ticker] = company_name
     return ticker_to_name
 
+tickers = list(holdings.keys())
 ticker_to_name = get_ticker_to_name(tickers)
 name_to_ticker = {name: ticker for ticker, name in ticker_to_name.items()}
 
+# --- Calculate Portfolio Summary ---
+portfolio_data = []
+total_invested = 0.0
+total_current_value = 0.0
+
+for ticker, shares in holdings.items():
+    avg_cost = latest_average_costs[ticker]
+    invested_amount = shares * avg_cost
+    ticker_obj = yf.Ticker(ticker)
+    current_price = ticker_obj.history(period='1d')['Close'][0]
+    current_value = shares * current_price
+    gain_loss = current_value - invested_amount
+    gain_loss_percent = (gain_loss / invested_amount) * 100 if invested_amount != 0 else 0
+    company_name = ticker_to_name[ticker]
+    
+    total_invested += invested_amount
+    total_current_value += current_value
+
+    portfolio_data.append({
+        'Ticker': ticker,
+        'Company Name': company_name,
+        'Shares': shares,
+        'Average Cost': avg_cost,
+        'Current Price': current_price,
+        'Invested Amount': invested_amount,
+        'Current Value': current_value,
+        'Gain/Loss': gain_loss,
+        'Gain/Loss %': gain_loss_percent
+    })
+
+portfolio_df = pd.DataFrame(portfolio_data)
+
+# --- Display Portfolio Summary ---
+st.header("Portfolio Overview")
+
+col1, col2, col3 = st.columns(3)
+col1.metric("Total Invested", f"${total_invested:,.2f}")
+col2.metric("Current Value", f"${total_current_value:,.2f}")
+total_gain_loss = total_current_value - total_invested
+total_gain_loss_percent = (total_gain_loss / total_invested) * 100 if total_invested != 0 else 0
+col3.metric("Total Gain/Loss", f"${total_gain_loss:,.2f}", f"{total_gain_loss_percent:+.2f}%")
+
+# --- Display Portfolio Allocation Pie Chart ---
+fig_pie = px.pie(
+    portfolio_df, 
+    names='Company Name', 
+    values='Current Value', 
+    title='Portfolio Allocation',
+    hole=0.4
+)
+st.plotly_chart(fig_pie, use_container_width=True)
+
+# --- Display Holdings DataFrame ---
+st.dataframe(
+    portfolio_df[['Ticker', 'Company Name', 'Shares', 'Average Cost', 'Current Price', 'Invested Amount', 'Current Value', 'Gain/Loss', 'Gain/Loss %']].style.format({
+        'Shares': '{:.2f}',
+        'Average Cost': '${:,.2f}',
+        'Current Price': '${:,.2f}',
+        'Invested Amount': '${:,.2f}',
+        'Current Value': '${:,.2f}',
+        'Gain/Loss': '${:,.2f}',
+        'Gain/Loss %': '{:+.2f}%'
+    })
+)
+
+# --- Integrate into the Streamlit App ---
+st.header("Individual Stock Performance")
 
 # Add a dropdown to select a stock using company names
-selected_name = st.selectbox('Select a Stock to View Holdings', options=sorted(name_to_ticker.keys()))
+selected_name = st.selectbox('Select a Stock to View Holdings History', options=sorted(name_to_ticker.keys()))
 selected_stock = name_to_ticker[selected_name]
 
 # Get the stock history
