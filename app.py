@@ -65,11 +65,21 @@ for ticker, shares in holdings.items():
     avg_cost = latest_average_costs[ticker]
     invested_amount = shares * avg_cost
     ticker_obj = yf.Ticker(ticker)
-    current_price = ticker_obj.history(period='1d')['Close'][0]
+    
+    # Fetch historical data
+    hist = ticker_obj.history(period='1d')
+    
+    # Check if the DataFrame is empty
+    if hist.empty or 'Close' not in hist.columns or hist['Close'].empty:
+        st.warning(f"No data available for ticker {ticker}. Skipping.")
+        continue  # Skip to the next ticker
+    
+    # Proceed if data is available
+    current_price = hist['Close'][0]
     current_value = shares * current_price
     gain_loss = current_value - invested_amount
     gain_loss_percent = (gain_loss / invested_amount) * 100 if invested_amount != 0 else 0
-    company_name = ticker_to_name[ticker]
+    company_name = ticker_to_name.get(ticker, ticker)
     
     total_invested += invested_amount
     total_current_value += current_value
@@ -85,6 +95,7 @@ for ticker, shares in holdings.items():
         'Gain/Loss': gain_loss,
         'Gain/Loss %': gain_loss_percent
     })
+
 
 portfolio_df = pd.DataFrame(portfolio_data)
 
