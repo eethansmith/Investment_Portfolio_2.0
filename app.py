@@ -42,9 +42,27 @@ holdings = {k: v for k, v in holdings.items() if v > 0.001}
 # Get a list of tickers with holdings over 0.001 shares
 tickers = list(holdings.keys())
 
+# Map tickers to company names
+@st.cache_data
+def get_ticker_to_name(tickers):
+    ticker_to_name = {}
+    for ticker in tickers:
+        ticker_obj = yf.Ticker(ticker)
+        try:
+            info = ticker_obj.info
+            company_name = info.get('longName', ticker)
+        except Exception as e:
+            company_name = ticker
+        ticker_to_name[ticker] = company_name
+    return ticker_to_name
 
-# Add a dropdown to select a stock
-selected_stock = st.selectbox('Select a Stock to View Holdings History', options=tickers)
+ticker_to_name = get_ticker_to_name(tickers)
+name_to_ticker = {name: ticker for ticker, name in ticker_to_name.items()}
+
+
+# Add a dropdown to select a stock using company names
+selected_name = st.selectbox('Select a Stock to View Holdings History', options=sorted(name_to_ticker.keys()))
+selected_stock = name_to_ticker[selected_name]
 
 # Get the stock history
 historical_df = get_stock_history(selected_stock, transactions_data)
@@ -70,7 +88,7 @@ if historical_df is not None and not historical_df.empty:
 
     # Update layout without dual y-axes
     fig.update_layout(
-        title=f'{selected_stock} Holdings',
+        title=f'{selected_name} Holdings',
         xaxis_title='Date',
         yaxis_title='Value (USD)',
         legend=dict(x=0.01, y=0.99)
