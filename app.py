@@ -108,19 +108,6 @@ fig_pie = px.pie(
 )
 st.plotly_chart(fig_pie, use_container_width=True)
 
-# --- Display Holdings DataFrame ---
-st.dataframe(
-    portfolio_df[['Ticker', 'Company Name', 'Shares', 'Average Cost', 'Current Price', 'Invested Amount', 'Current Value', 'Gain/Loss', 'Gain/Loss %']].style.format({
-        'Shares': '{:.2f}',
-        'Average Cost': '${:,.2f}',
-        'Current Price': '${:,.2f}',
-        'Invested Amount': '${:,.2f}',
-        'Current Value': '${:,.2f}',
-        'Gain/Loss': '${:,.2f}',
-        'Gain/Loss %': '{:+.2f}%'
-    })
-)
-
 # --- Integrate into the Streamlit App ---
 st.header("Individual Stock Performance")
 
