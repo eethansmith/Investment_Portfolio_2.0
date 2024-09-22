@@ -43,11 +43,26 @@ current_values = {}
 for ticker, shares in holdings.items():
     ticker_obj = yf.Ticker(ticker)
     try:
-        current_price = ticker_obj.history(period='1d')['Close'].iloc[-1]
+        # Attempt to get the current price
+        current_price = None
+        if hasattr(ticker_obj, 'fast_info') and ticker_obj.fast_info.get('lastPrice'):
+            current_price = ticker_obj.fast_info['lastPrice']
+        elif ticker_obj.info.get('regularMarketPrice'):
+            current_price = ticker_obj.info['regularMarketPrice']
+        else:
+            # Fallback to using history data
+            hist = ticker_obj.history(period='5d')  # Use '5d' to ensure data is available
+            if not hist.empty:
+                current_price = hist['Close'].iloc[-1]
+        
+        if current_price is None:
+            raise ValueError(f"Current price for {ticker} is unavailable.")
+        
         current_value = current_price * shares
         current_values[ticker] = current_value
     except Exception as e:
-        current_values[ticker] = 0.0  # Handle cases where price data is unavailable
+        current_values[ticker] = 0.0
+        st.error(f"Failed to retrieve price for {ticker}: {e}")
 
 # Calculate total portfolio value
 total_portfolio_value = sum(current_values.values())
