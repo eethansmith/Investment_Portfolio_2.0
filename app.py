@@ -57,7 +57,7 @@ if historical_df is not None and not historical_df.empty:
         x=historical_df['Date'],
         y=historical_df['Value Paid'],
         name='Value Invested',
-        line=dict(color='#FAFAFA')
+        line=dict(color='#FFFFFF')
     ))
 
     # Add "Value of Holdings" line
@@ -70,7 +70,7 @@ if historical_df is not None and not historical_df.empty:
 
     # Update layout without dual y-axes
     fig.update_layout(
-        title=f'Value of Holdings and Value Invested Over Time for {selected_stock}',
+        title=f'{selected_stock} Holdings',
         xaxis_title='Date',
         yaxis_title='Value (USD)',
         legend=dict(x=0.01, y=0.99)
