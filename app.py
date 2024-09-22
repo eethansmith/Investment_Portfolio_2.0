@@ -38,10 +38,38 @@ for transaction in transactions_data:
 # Filter out stocks where holdings are zero or negative
 holdings = {k: v for k, v in holdings.items() if v > 0.001}
 
-# --- Integrate into the Streamlit App ---
-# Get a list of tickers with holdings over 0.001 shares
-tickers = list(holdings.keys())
+# --- Calculate Current Values and Total Portfolio Value ---
+current_values = {}
+for ticker, shares in holdings.items():
+    ticker_obj = yf.Ticker(ticker)
+    try:
+        current_price = ticker_obj.history(period='1d')['Close'].iloc[-1]
+        current_value = current_price * shares
+        current_values[ticker] = current_value
+    except Exception as e:
+        current_values[ticker] = 0.0  # Handle cases where price data is unavailable
 
+# Calculate total portfolio value
+total_portfolio_value = sum(current_values.values())
+
+# --- Display Overall Holdings at the Top ---
+st.header('Overall Holdings')
+st.subheader(f'Total Portfolio Value: ${total_portfolio_value:,.2f}')
+
+# Create a DataFrame for detailed holdings
+holdings_df = pd.DataFrame({
+    'Ticker': list(holdings.keys()),
+    'Shares': list(holdings.values()),
+    'Current Value (USD)': [current_values[ticker] for ticker in holdings.keys()]
+})
+
+# Format the DataFrame
+holdings_df['Current Value (USD)'] = holdings_df['Current Value (USD)'].map('${:,.2f}'.format)
+
+# Display the DataFrame as a table
+st.table(holdings_df)
+
+# --- Integrate into the Streamlit App ---
 # Map tickers to company names
 @st.cache_data
 def get_ticker_to_name(tickers):
@@ -56,9 +84,9 @@ def get_ticker_to_name(tickers):
         ticker_to_name[ticker] = company_name
     return ticker_to_name
 
+tickers = list(holdings.keys())
 ticker_to_name = get_ticker_to_name(tickers)
 name_to_ticker = {name: ticker for ticker, name in ticker_to_name.items()}
-
 
 # Add a dropdown to select a stock using company names
 selected_name = st.selectbox('Select a Stock to View Holdings', options=sorted(name_to_ticker.keys()))
@@ -69,7 +97,7 @@ historical_df = get_stock_history(selected_stock, transactions_data)
 if historical_df is not None and not historical_df.empty:
     # Plot Value of Holdings and Value Invested over time on the same y-axis
     fig = go.Figure()
-    
+
     # Add "Value Invested" line
     fig.add_trace(go.Scatter(
         x=historical_df['Date'],
@@ -97,4 +125,3 @@ if historical_df is not None and not historical_df.empty:
     st.plotly_chart(fig)
 else:
     st.warning("No historical data available to display.")
-
