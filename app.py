@@ -118,13 +118,28 @@ else:
             color_rgb = interpolate_color(grey, dark_navy, interp_factor)
         shades_of_batman.append(f'rgb{color_rgb}')
 
-# Create the pie chart
+# --- Enhanced Pie Chart ---
+holdings_df = pd.DataFrame({
+    'Ticker': list(holdings.keys()),
+    'Shares': list(holdings.values()),
+    'Current Value Numeric': [current_values[ticker] for ticker in holdings.keys()],
+    'Profit/Loss': [profit_loss_per_stock[ticker] for ticker in holdings.keys()]
+})
+
+# Format the DataFrame
+holdings_df['Current Value (USD)'] = holdings_df['Current Value Numeric'].map('${:,.2f}'.format)
+
+# Sort holdings by current value for better color gradient
+holdings_df.sort_values('Current Value Numeric', ascending=False, inplace=True)
+
+# Create the pie chart with hover information
 fig = go.Figure(data=[go.Pie(
     labels=holdings_df['Ticker'],
     values=holdings_df['Current Value Numeric'],
     marker=dict(colors=shades_of_batman),
     textinfo='label+percent',
-    hoverinfo='label+value'
+    hovertemplate='<b>%{label}</b><br>Current Value: %{value:$,.2f}<br>Profit/Loss: %{customdata:$,.2f}',
+    customdata=holdings_df['Profit/Loss']
 )])
 
 fig.update_layout(
@@ -134,6 +149,7 @@ fig.update_layout(
 
 # Display the pie chart
 st.plotly_chart(fig)
+
 
 # Map tickers to company names
 @st.cache_data
