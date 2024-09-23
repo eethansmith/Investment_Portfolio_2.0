@@ -81,9 +81,6 @@ holdings_df = pd.DataFrame({
 # Format the DataFrame
 holdings_df['Current Value (USD)'] = holdings_df['Current Value Numeric'].map('${:,.2f}'.format)
 
-# Remove the table display
-# st.table(holdings_df)
-
 # --- Create a Pie Chart ---
 # Sort holdings by current value for better color gradient
 holdings_df.sort_values('Current Value Numeric', ascending=False, inplace=True)
@@ -94,6 +91,7 @@ shades_of_red = []
 if num_shades == 1:
     shades_of_red = ['rgb(255, 0, 0)']
 else:
+    # Start with dark red and gradually lighten
     for i in range(num_shades):
         # Calculate the midpoint
         midpoint = num_shades // 2
@@ -110,7 +108,7 @@ else:
         
         shades_of_red.append(color)
 
-# Now `shades_of_red` contains the gradient from white to mid-red to dark red
+# Now `shades_of_red` contains the gradient from dark red to light red
 
 # Create the pie chart
 fig = go.Figure(data=[go.Pie(
@@ -171,7 +169,7 @@ if historical_df is not None and not historical_df.empty:
         x=historical_df['Date'],
         y=historical_df['Value'],
         name='Value of Holdings',
-        line=dict(color='#FF4B4B')
+        line=dict(color='#FDE311')
     ))
 
     # Update layout without dual y-axes
