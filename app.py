@@ -1,14 +1,17 @@
+import streamlit as st
+
 import json
 from pathlib import Path
 import yfinance as yf
 import pandas as pd
-import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import time
 
 from stock_data import get_stock_history
+
+st.set_page_config(page_title="Investment Portfolio", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
 
 # Set the title of the app
 st.title('Investment Portfolio')
