@@ -81,52 +81,52 @@ holdings_df = pd.DataFrame({
 # Format the DataFrame
 holdings_df['Current Value (USD)'] = holdings_df['Current Value Numeric'].map('${:,.2f}'.format)
 
-# --- Create a Pie Chart ---
+# --- Create a Batman-Themed Pie Chart ---
+import matplotlib.colors as mcolors
+
 # Sort holdings by current value for better color gradient
 holdings_df.sort_values('Current Value Numeric', ascending=False, inplace=True)
 
-# Generate shades of red
+# Define Batman-themed colors
+batman_yellow = '#FDE311'
+dark_navy = '#0C2340'  # Batman's dark navy
+grey_palette = ['#2C2C2C', '#4F4F4F', '#6E6E6E', '#9E9E9E']  # Different shades of grey
+
+# Generate shades of Batman theme
 num_shades = len(holdings_df)
-shades_of_red = []
+batman_colors = []
+
 if num_shades == 1:
-    shades_of_red = ['rgb(255, 0, 0)']
+    batman_colors = [batman_yellow]
 else:
-    # Start with dark red and gradually lighten
+    # Alternate between yellow, navy, and greys
     for i in range(num_shades):
-        # Calculate the midpoint
-        midpoint = num_shades // 2
-        
-        # Going from white to red to dark red
-        if i <= midpoint:
-            # Increasing red value and decreasing green/blue values
-            gb_value = int(255 - (i * (255 / midpoint)))
-            color = f'rgb(255, {gb_value}, {gb_value})'  # Fade to red
+        if i == 0:
+            # Start with Batman yellow
+            batman_colors.append(batman_yellow)
+        elif i % 2 == 0:
+            # Alternate with dark navy
+            batman_colors.append(dark_navy)
         else:
-            # After midpoint, we darken the red (move towards black)
-            dark_factor = int((i - midpoint) * (255 / (num_shades - midpoint)))
-            color = f'rgb({255 - dark_factor}, 0, 0)'  # Darken red
-        
-        shades_of_red.append(color)
+            # Fill in with grey shades (cycled through)
+            batman_colors.append(grey_palette[i % len(grey_palette)])
 
-# Now `shades_of_red` contains the gradient from dark red to light red
-
-# Create the pie chart
+# Create the pie chart with Batman theme colors
 fig = go.Figure(data=[go.Pie(
     labels=holdings_df['Ticker'],
     values=holdings_df['Current Value Numeric'],
-    marker=dict(colors=shades_of_red),
+    marker=dict(colors=batman_colors),
     textinfo='label+percent',
     hoverinfo='label+value'
 )])
 
 fig.update_layout(
-    title_text='Portfolio Allocation',
+    title_text='Portfolio Allocation (Batman Theme)',
     showlegend=True
 )
 
 # Display the pie chart
 st.plotly_chart(fig)
-
 # --- Integrate into the Streamlit App ---
 # Map tickers to company names
 @st.cache_data
