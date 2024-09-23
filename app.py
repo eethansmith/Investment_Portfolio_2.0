@@ -111,8 +111,17 @@ for ticker, shares in holdings.items():
 total_profit_loss = total_current_value - total_invested_amount
 
 # --- Display Overall Holdings at the Top ---
-st.subheader(f'Total Portfolio Value: ${total_portfolio_value:,.2f}')
+st.subheader(f'Total Portfolio Value: ${total_current_value:,.2f}')
+st.write(f"Total Amount Invested: ${total_invested_amount:,.2f}")
+st.write(f"Total Profit/Loss: ${total_profit_loss:,.2f}")
 
+# Display profit/loss percentage
+if total_invested_amount != 0:
+    total_profit_loss_percent = (total_profit_loss / total_invested_amount) * 100
+    st.write(f"Total Profit/Loss Percentage: {total_profit_loss_percent:.2f}%")
+else:
+    st.write("Total Profit/Loss Percentage: N/A")
+    
 # Create a DataFrame for detailed holdings
 holdings_df = pd.DataFrame({
     'Ticker': list(holdings.keys()),
@@ -127,9 +136,9 @@ holdings_df['Current Value (USD)'] = holdings_df['Current Value Numeric'].map('$
 holdings_df.sort_values('Current Value Numeric', ascending=False, inplace=True)
 
 # Define the Batman-themed colors in RGB format
-batman_yellow = (253, 227, 17)  # FDE311
-dark_navy = (12, 35, 64)        # 0C2340
-grey = (93, 93, 93)             # 5D5D5D
+batman_yellow = (253, 227, 17)
+dark_navy = (12, 35, 64)        
+grey = (93, 93, 93)             
 
 num_shades = len(holdings_df)
 shades_of_batman = []
@@ -166,7 +175,6 @@ fig = go.Figure(data=[go.Pie(
 )])
 
 fig.update_layout(
-    title_text='Portfolio Allocation - Batman Theme',
     showlegend=True
 )
 
