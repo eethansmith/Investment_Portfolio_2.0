@@ -54,10 +54,10 @@ for ticker, shares in holdings.items():
             hist = ticker_obj.history(period='5d')  # Use '5d' to ensure data is available
             if not hist.empty:
                 current_price = hist['Close'].iloc[-1]
-        
+
         if current_price is None:
             raise ValueError(f"Current price for {ticker} is unavailable.")
-        
+
         current_value = current_price * shares
         current_values[ticker] = current_value
     except Exception as e:
@@ -75,14 +75,46 @@ st.subheader(f'Total Portfolio Value: ${total_portfolio_value:,.2f}')
 holdings_df = pd.DataFrame({
     'Ticker': list(holdings.keys()),
     'Shares': list(holdings.values()),
-    'Current Value (USD)': [current_values[ticker] for ticker in holdings.keys()]
+    'Current Value Numeric': [current_values[ticker] for ticker in holdings.keys()]
 })
 
 # Format the DataFrame
-holdings_df['Current Value (USD)'] = holdings_df['Current Value (USD)'].map('${:,.2f}'.format)
+holdings_df['Current Value (USD)'] = holdings_df['Current Value Numeric'].map('${:,.2f}'.format)
 
-# Display the DataFrame as a table
-st.table(holdings_df)
+# Remove the table display
+# st.table(holdings_df)
+
+# --- Create a Pie Chart ---
+# Sort holdings by current value for better color gradient
+holdings_df.sort_values('Current Value Numeric', ascending=False, inplace=True)
+
+# Generate shades of red
+num_shades = len(holdings_df)
+shades_of_red = []
+if num_shades == 1:
+    shades_of_red = ['rgb(255, 50, 50)']
+else:
+    for i in range(num_shades):
+        gb_value = int(255 - i * (205 / (num_shades - 1)))
+        color = f'rgb(255, {gb_value}, {gb_value})'
+        shades_of_red.append(color)
+
+# Create the pie chart
+fig = go.Figure(data=[go.Pie(
+    labels=holdings_df['Ticker'],
+    values=holdings_df['Current Value Numeric'],
+    marker=dict(colors=shades_of_red),
+    textinfo='label+percent',
+    hoverinfo='label+value'
+)])
+
+fig.update_layout(
+    title_text='Portfolio Allocation',
+    showlegend=True
+)
+
+# Display the pie chart
+st.plotly_chart(fig)
 
 # --- Integrate into the Streamlit App ---
 # Map tickers to company names
