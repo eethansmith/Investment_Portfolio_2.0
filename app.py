@@ -222,14 +222,6 @@ col4.metric("Average Cost per Share", f"${avg_cost_per_share:,.2f}" if avg_cost_
 col5.metric("Current Price per Share", f"${current_price:,.2f}" if current_price else "N/A")
 col6.metric("Shares Held", f"{shares_held}")
 
-col7, col8, col9 = st.columns(3)
-col7.metric("P/E Ratio", f"{pe_ratio:.2f}" if pe_ratio else "N/A")
-col8.metric("Market Cap", f"${market_cap:,.2f}" if market_cap else "N/A")
-if dividend_yield:
-    col9.metric("Dividend Yield", f"{dividend_yield*100:.2f}%")
-else:
-    col9.metric("Dividend Yield", "N/A")
-
 # Plot the graph
 if historical_df is not None and not historical_df.empty:
     # Plot Value of Holdings and Value Invested over time on the same y-axis
