@@ -233,7 +233,7 @@ col4.markdown(f"""
 # Column for Current Price per Share
 col5.markdown(f"""
     <div style='font-size: {small_font_size}; text-align: center;'>
-        <strong>Current Price per Share</strong><br>
+        <strong>Price per Share</strong><br>
         {f"${current_price:,.2f}" if current_price else "N/A"}
     </div>
 """, unsafe_allow_html=True)
@@ -269,7 +269,6 @@ if historical_df is not None and not historical_df.empty:
 
     # Update layout without dual y-axes
     fig.update_layout(
-        title=f'{selected_name} Holdings',
         xaxis_title='Date',
         yaxis_title='Value (USD)',
         legend=dict(x=0.01, y=0.99)
