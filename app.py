@@ -68,9 +68,7 @@ for ticker, shares in holdings.items():
 total_portfolio_value = sum(current_values.values())
 
 # --- Display Overall Holdings at the Top ---
-st.subheader(f'Total Portfolio Value: ${total_current_value:,.2f}')
-st.write(f"Total Amount Invested: ${total_invested_amount:,.2f}")
-st.write(f"Total Profit/Loss: ${total_profit_loss:,.2f}")
+st.subheader(f'Total Portfolio Value: ${total_portfolio_value:,.2f}')
 
 # Create a DataFrame for detailed holdings
 holdings_df = pd.DataFrame({
