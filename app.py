@@ -92,12 +92,13 @@ holdings_df.sort_values('Current Value Numeric', ascending=False, inplace=True)
 num_shades = len(holdings_df)
 shades_of_red = []
 if num_shades == 1:
-    shades_of_red = ['rgb(255, 50, 50)']
+    shades_of_red = ['rgb(255, 0, 0)']
 else:
     for i in range(num_shades):
-        gb_value = int(255 - i * (205 / (num_shades - 1)))
+        gb_value = int(i * (255 / (num_shades - 1)))
         color = f'rgb(255, {gb_value}, {gb_value})'
         shades_of_red.append(color)
+
 
 # Create the pie chart
 fig = go.Figure(data=[go.Pie(
