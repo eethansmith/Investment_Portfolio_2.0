@@ -199,6 +199,15 @@ fig.update_layout(
 # Display the pie chart
 st.plotly_chart(fig)
 
+    """_summary_
+
+    Returns:
+        _type_: _description_
+
+    Yields:
+        _type_: _description_
+    """
+
 # Map tickers to company names
 @st.cache_data
 def get_ticker_to_name(tickers):
