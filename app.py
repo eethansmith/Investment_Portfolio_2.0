@@ -218,9 +218,33 @@ else:
     col3.metric("Profit/Loss", "N/A")
 
 col4, col5, col6 = st.columns(3)
-col4.metric("Average Cost per Share", f"${avg_cost_per_share:,.2f}" if avg_cost_per_share else "N/A")
-col5.metric("Current Price per Share", f"${current_price:,.2f}" if current_price else "N/A")
-col6.metric("Shares Held", f"{shares_held}")
+
+# Define the desired smaller font size
+small_font_size = "16px"  # Adjust this value as needed
+
+# Column for Average Cost per Share
+col4.markdown(f"""
+    <div style='font-size: {small_font_size}; text-align: center;'>
+        <strong>Average Cost per Share</strong><br>
+        {f"${avg_cost_per_share:,.2f}" if avg_cost_per_share else "N/A"}
+    </div>
+""", unsafe_allow_html=True)
+
+# Column for Current Price per Share
+col5.markdown(f"""
+    <div style='font-size: {small_font_size}; text-align: center;'>
+        <strong>Current Price per Share</strong><br>
+        {f"${current_price:,.2f}" if current_price else "N/A"}
+    </div>
+""", unsafe_allow_html=True)
+
+# Column for Shares Held
+col6.markdown(f"""
+    <div style='font-size: {small_font_size}; text-align: center;'>
+        <strong>Shares Held</strong><br>
+        {shares_held}
+    </div>
+""", unsafe_allow_html=True)
 
 # Plot the graph
 if historical_df is not None and not historical_df.empty:
