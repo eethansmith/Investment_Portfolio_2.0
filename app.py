@@ -11,7 +11,7 @@ import time
 
 from stock_data import get_stock_history
 
-st.set_page_config(page_title="Investment Portfolio", page_icon=None, layout="centered", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title="Investment Portfolio", page_icon="logo.svg")
 
 # Set the title of the app
 st.title('Investment Portfolio')
