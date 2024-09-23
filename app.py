@@ -6,6 +6,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import time
 
 from stock_data import get_stock_history
 
@@ -19,53 +20,95 @@ json_file_path = Path(__file__).parent / 'data' / 'investment_data.json'
 with open(json_file_path, 'r') as file:
     transactions_data = json.load(file)
 
-# --- Process Transactions to Determine Current Holdings ---
+# --- Process Transactions to Determine Current Holdings and Cumulative Investment ---
 holdings = {}
 latest_average_costs = {}
-for transaction in transactions_data:
+cumulative_investment = 0.0
+investment_over_time = []
+portfolio_value_over_time = []
+dates = []
+
+# Create a DataFrame from transactions_data for easier processing
+transactions_df = pd.DataFrame(transactions_data)
+transactions_df['Date'] = pd.to_datetime(transactions_df['Date'])
+
+# Sort transactions by date
+transactions_df.sort_values('Date', inplace=True)
+
+# Initialize a dictionary to keep track of shares held over time
+shares_held_over_time = {}
+
+# Process each transaction
+for idx, transaction in transactions_df.iterrows():
+    date = transaction["Date"]
     ticker = transaction["Ticker Symbol"]
     shares = float(transaction["No. of Shares"])
     transaction_type = transaction["Transaction Type"]
     avg_cost = float(transaction["Average Cost per Share USD"])
+    total_cost = shares * avg_cost
 
     if ticker not in holdings:
         holdings[ticker] = 0.0
 
     # Adjust shares based on transaction type
-    holdings[ticker] += shares if transaction_type == "BUY" else -shares
+    if transaction_type == "BUY":
+        holdings[ticker] += shares
+        cumulative_investment += total_cost
+    elif transaction_type == "SELL":
+        holdings[ticker] -= shares
+        cumulative_investment -= total_cost
+
     latest_average_costs[ticker] = avg_cost  # Update with the latest average cost
+
+    # Record the cumulative investment over time
+    investment_over_time.append(cumulative_investment)
+    dates.append(date)
+
+    # Record shares held over time
+    shares_held_over_time.setdefault(ticker, []).append((date, holdings[ticker]))
 
 # Filter out stocks where holdings are zero or negative
 holdings = {k: v for k, v in holdings.items() if v > 0.001}
 
 # --- Calculate Current Values and Total Portfolio Value ---
 current_values = {}
+profit_loss_per_stock = {}
+total_current_value = 0.0
+total_invested_amount = 0.0
+
 for ticker, shares in holdings.items():
     ticker_obj = yf.Ticker(ticker)
     try:
         # Attempt to get the current price
-        current_price = None
-        if hasattr(ticker_obj, 'fast_info') and ticker_obj.fast_info.get('lastPrice'):
-            current_price = ticker_obj.fast_info['lastPrice']
-        elif ticker_obj.info.get('regularMarketPrice'):
-            current_price = ticker_obj.info['regularMarketPrice']
-        else:
-            # Fallback to using history data
-            hist = ticker_obj.history(period='5d')  # Use '5d' to ensure data is available
-            if not hist.empty:
-                current_price = hist['Close'].iloc[-1]
-
-        if current_price is None:
-            raise ValueError(f"Current price for {ticker} is unavailable.")
+        current_price = ticker_obj.history(period='1d')['Close'][0]
 
         current_value = current_price * shares
         current_values[ticker] = current_value
+        total_current_value += current_value
+
+        # Calculate total invested amount for this stock
+        total_invested = 0.0
+        for idx, transaction in transactions_df[transactions_df['Ticker Symbol'] == ticker].iterrows():
+            shares_transacted = float(transaction["No. of Shares"])
+            avg_cost = float(transaction["Average Cost per Share USD"])
+            total_cost = shares_transacted * avg_cost
+            if transaction["Transaction Type"] == "BUY":
+                total_invested += total_cost
+            elif transaction["Transaction Type"] == "SELL":
+                total_invested -= total_cost
+
+        total_invested_amount += total_invested
+
+        # Calculate profit or loss for this stock
+        profit_loss = current_value - total_invested
+        profit_loss_per_stock[ticker] = profit_loss
+
     except Exception as e:
         current_values[ticker] = 0.0
         st.error(f"Failed to retrieve price for {ticker}: {e}")
 
-# Calculate total portfolio value
-total_portfolio_value = sum(current_values.values())
+# Calculate total profit or loss
+total_profit_loss = total_current_value - total_invested_amount
 
 # --- Display Overall Holdings at the Top ---
 st.subheader(f'Total Portfolio Value: ${total_portfolio_value:,.2f}')
