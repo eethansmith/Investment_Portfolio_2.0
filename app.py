@@ -137,6 +137,7 @@ fig.update_layout(
 st.plotly_chart(fig)
 
 # --- Integrate into the Streamlit App ---
+
 # Map tickers to company names
 @st.cache_data
 def get_ticker_to_name(tickers):
@@ -146,6 +147,7 @@ def get_ticker_to_name(tickers):
         try:
             info = ticker_obj.info
             company_name = info.get('longName', ticker)
+            time.sleep(0.1)  # To prevent hitting the API rate limit
         except Exception as e:
             company_name = ticker
         ticker_to_name[ticker] = company_name
@@ -161,6 +163,74 @@ selected_stock = name_to_ticker[selected_name]
 
 # Get the stock history
 historical_df = get_stock_history(selected_stock, transactions_data)
+
+# Calculate additional stats
+# Get number of shares held
+shares_held = holdings.get(selected_stock, 0)
+
+# Get current price
+ticker_obj = yf.Ticker(selected_stock)
+try:
+    current_price = ticker_obj.history(period='1d')['Close'][0]
+except Exception as e:
+    current_price = None
+
+if current_price is not None:
+    current_value = shares_held * current_price
+else:
+    current_value = None
+
+# Get total amount invested
+if historical_df is not None and not historical_df.empty:
+    total_invested = historical_df['Value Paid'].iloc[-1]
+else:
+    total_invested = None
+
+# Compute profit and profit percentage
+if current_value is not None and total_invested is not None:
+    profit = current_value - total_invested
+    profit_percent = (profit / total_invested) * 100 if total_invested != 0 else None
+else:
+    profit = None
+    profit_percent = None
+
+# Compute average cost per share
+if shares_held > 0 and total_invested is not None:
+    avg_cost_per_share = total_invested / shares_held
+else:
+    avg_cost_per_share = None
+
+# Get additional stats
+info = ticker_obj.info
+pe_ratio = info.get('trailingPE')
+market_cap = info.get('marketCap')
+dividend_yield = info.get('dividendYield')
+
+# Display the stats
+st.markdown(f"### {selected_name} ({selected_stock})")
+
+col1, col2, col3 = st.columns(3)
+col1.metric("Current Holdings Value", f"${current_value:,.2f}" if current_value else "N/A")
+col2.metric("Total Amount Invested", f"${total_invested:,.2f}" if total_invested else "N/A")
+if profit is not None and profit_percent is not None:
+    col3.metric("Profit/Loss", f"${profit:,.2f}", f"{profit_percent:.2f}%")
+else:
+    col3.metric("Profit/Loss", "N/A")
+
+col4, col5, col6 = st.columns(3)
+col4.metric("Average Cost per Share", f"${avg_cost_per_share:,.2f}" if avg_cost_per_share else "N/A")
+col5.metric("Current Price per Share", f"${current_price:,.2f}" if current_price else "N/A")
+col6.metric("Shares Held", f"{shares_held}")
+
+col7, col8, col9 = st.columns(3)
+col7.metric("P/E Ratio", f"{pe_ratio:.2f}" if pe_ratio else "N/A")
+col8.metric("Market Cap", f"${market_cap:,.2f}" if market_cap else "N/A")
+if dividend_yield:
+    col9.metric("Dividend Yield", f"{dividend_yield*100:.2f}%")
+else:
+    col9.metric("Dividend Yield", "N/A")
+
+# Plot the graph
 if historical_df is not None and not historical_df.empty:
     # Plot Value of Holdings and Value Invested over time on the same y-axis
     fig = go.Figure()
