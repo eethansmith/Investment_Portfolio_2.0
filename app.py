@@ -81,46 +81,55 @@ holdings_df = pd.DataFrame({
 # Format the DataFrame
 holdings_df['Current Value (USD)'] = holdings_df['Current Value Numeric'].map('${:,.2f}'.format)
 
-# --- Create a Pie Chart ---
 # Sort holdings by current value for better color gradient
 holdings_df.sort_values('Current Value Numeric', ascending=False, inplace=True)
 
-# Generate shades of red
-num_shades = len(holdings_df)
-shades_of_red = []
-if num_shades == 1:
-    shades_of_red = ['rgb(255, 0, 0)']
-else:
-    # Start with dark red and gradually lighten
-    for i in range(num_shades):
-        # Calculate the midpoint
-        midpoint = num_shades // 2
-        
-        # Going from white to red to dark red
-        if i <= midpoint:
-            # Increasing red value and decreasing green/blue values
-            gb_value = int(255 - (i * (255 / midpoint)))
-            color = f'rgb(255, {gb_value}, {gb_value})'  # Fade to red
-        else:
-            # After midpoint, we darken the red (move towards black)
-            dark_factor = int((i - midpoint) * (255 / (num_shades - midpoint)))
-            color = f'rgb({255 - dark_factor}, 0, 0)'  # Darken red
-        
-        shades_of_red.append(color)
+# Define the Batman-themed colors in RGB format
+batman_yellow = (253, 227, 17)  # FDE311
+dark_navy = (12, 35, 64)        # 0C2340
+grey = (93, 93, 93)             # 5D5D5D
 
-# Now `shades_of_red` contains the gradient from dark red to light red
+num_shades = len(holdings_df)
+shades_of_batman = []
+
+def interpolate_color(color1, color2, factor):
+    """
+    Interpolate between two colors.
+    color1 and color2 are in RGB tuple format (R, G, B) where R, G, B are 0-255.
+    factor is between 0 and 1, where 0 is color1, 1 is color2.
+    """
+    return tuple(
+        int(color1[i] + (color2[i] - color1[i]) * factor)
+        for i in range(3)
+    )
+
+if num_shades == 1:
+    shades_of_batman = [f'rgb{batman_yellow}']
+else:
+    # We'll create a gradient that goes from Batman yellow to grey to dark navy
+    for i in range(num_shades):
+        factor = i / (num_shades - 1)
+        if factor <= 0.5:
+            # Interpolate between yellow and grey
+            interp_factor = factor / 0.5
+            color_rgb = interpolate_color(batman_yellow, grey, interp_factor)
+        else:
+            # Interpolate between grey and dark navy
+            interp_factor = (factor - 0.5) / 0.5
+            color_rgb = interpolate_color(grey, dark_navy, interp_factor)
+        shades_of_batman.append(f'rgb{color_rgb}')
 
 # Create the pie chart
 fig = go.Figure(data=[go.Pie(
     labels=holdings_df['Ticker'],
     values=holdings_df['Current Value Numeric'],
-    marker=dict(colors=shades_of_red),
+    marker=dict(colors=shades_of_batman),
     textinfo='label+percent',
     hoverinfo='label+value'
 )])
 
 fig.update_layout(
-    title_text='Portfolio Allocation',
+    title_text='Portfolio Allocation - Batman Theme',
     showlegend=True
 )
 
