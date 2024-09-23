@@ -72,13 +72,6 @@ st.subheader(f'Total Portfolio Value: ${total_current_value:,.2f}')
 st.write(f"Total Amount Invested: ${total_invested_amount:,.2f}")
 st.write(f"Total Profit/Loss: ${total_profit_loss:,.2f}")
 
-# Display profit/loss percentage
-if total_invested_amount != 0:
-    total_profit_loss_percent = (total_profit_loss / total_invested_amount) * 100
-    st.write(f"Total Profit/Loss Percentage: {total_profit_loss_percent:.2f}%")
-else:
-    st.write("Total Profit/Loss Percentage: N/A")
-    
 # Create a DataFrame for detailed holdings
 holdings_df = pd.DataFrame({
     'Ticker': list(holdings.keys()),
