@@ -68,8 +68,17 @@ for ticker, shares in holdings.items():
 total_portfolio_value = sum(current_values.values())
 
 # --- Display Overall Holdings at the Top ---
-st.subheader(f'Total Portfolio Value: ${total_portfolio_value:,.2f}')
+st.subheader(f'Total Portfolio Value: ${total_current_value:,.2f}')
+st.write(f"Total Amount Invested: ${total_invested_amount:,.2f}")
+st.write(f"Total Profit/Loss: ${total_profit_loss:,.2f}")
 
+# Display profit/loss percentage
+if total_invested_amount != 0:
+    total_profit_loss_percent = (total_profit_loss / total_invested_amount) * 100
+    st.write(f"Total Profit/Loss Percentage: {total_profit_loss_percent:.2f}%")
+else:
+    st.write("Total Profit/Loss Percentage: N/A")
+    
 # Create a DataFrame for detailed holdings
 holdings_df = pd.DataFrame({
     'Ticker': list(holdings.keys()),
@@ -92,11 +101,6 @@ num_shades = len(holdings_df)
 shades_of_batman = []
 
 def interpolate_color(color1, color2, factor):
-    """
-    Interpolate between two colors.
-    color1 and color2 are in RGB tuple format (R, G, B) where R, G, B are 0-255.
-    factor is between 0 and 1, where 0 is color1, 1 is color2.
-    """
     return tuple(
         int(color1[i] + (color2[i] - color1[i]) * factor)
         for i in range(3)
