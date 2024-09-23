@@ -95,10 +95,22 @@ if num_shades == 1:
     shades_of_red = ['rgb(255, 0, 0)']
 else:
     for i in range(num_shades):
-        gb_value = int(i * (255 / (num_shades - 1)))
-        color = f'rgb(255, {gb_value}, {gb_value})'
+        # Calculate the midpoint
+        midpoint = num_shades // 2
+        
+        # Going from white to red to dark red
+        if i <= midpoint:
+            # Increasing red value and decreasing green/blue values
+            gb_value = int(255 - (i * (255 / midpoint)))
+            color = f'rgb(255, {gb_value}, {gb_value})'  # Fade to red
+        else:
+            # After midpoint, we darken the red (move towards black)
+            dark_factor = int((i - midpoint) * (255 / (num_shades - midpoint)))
+            color = f'rgb({255 - dark_factor}, 0, 0)'  # Darken red
+        
         shades_of_red.append(color)
 
+# Now `shades_of_red` contains the gradient from white to mid-red to dark red
 
 # Create the pie chart
 fig = go.Figure(data=[go.Pie(
