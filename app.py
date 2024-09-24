@@ -199,9 +199,7 @@ fig.update_layout(
 # Display the pie chart
 st.plotly_chart(fig)
 
-InvestmentPortfolioLink = "https://github.com/eethansmith/Investment-Portfolio-Project"
-
-st.markdown("Visual representation of my current stock holdings in my investment portfolio. This application is a remake of the original [Investment Portfolio Project] (%s) I built using a React frontend and Django backend API in December 2023. Utilised yfinance to obtain live data along with investment transactions from FreeTrade. I wanted to recreate this project using Streamlit for ease of use and deployment whilst experimenting with more AI functionality." % InvestmentPortfolioLink)  
+st.markdown("Visual representation of my current stock holdings in my investment portfolio. This application is a remake of the original [Investment Portfolio Project](https://github.com/eethansmith/Investment-Portfolio-Project) I built using a React frontend and Django backend API in December 2023. Utilised yfinance to obtain live data along with investment transactions from FreeTrade. I wanted to recreate this project using Streamlit for ease of use and deployment whilst experimenting with more AI functionality.")  
 
 # --- Display Detailed Holdings ---
 # Map tickers to company names
