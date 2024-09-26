@@ -182,36 +182,44 @@ def create_pie_chart(holdings_df):
     # Display the pie chart
     st.plotly_chart(fig)
     
+@st.cache_data
+def get_ticker_to_name(tickers):
+    ticker_to_name = {}
+    for ticker in tickers:
+        ticker_obj = yf.Ticker(ticker)
+        company_name = ticker  # Default to ticker symbol
+        try:
+            info = ticker_obj.info
+            if info and 'longName' in info:
+                company_name = info['longName']
+            time.sleep(0.1)  # To prevent hitting the API rate limit
+        except Exception as e:
+            st.error(f"Failed to retrieve info for {ticker}: {e}")
+        ticker_to_name[ticker] = company_name
+    return ticker_to_name
+
+    
 def display_stock_details(holdings, transactions_df):
     """Display detailed holdings and graphs for the selected stock."""
-    @st.cache_data
-    def get_ticker_to_name(tickers):
-        ticker_to_name = {}
-        for ticker in tickers:
-            ticker_obj = yf.Ticker(ticker)
-            try:
-                info = ticker_obj.info
-                company_name = info.get('longName', ticker)
-                time.sleep(0.1)
-            except Exception as e:
-                company_name = ticker
-            ticker_to_name[ticker] = company_name
-        return ticker_to_name
-
+    # Map tickers to company names
     tickers = list(holdings.keys())
     ticker_to_name = get_ticker_to_name(tickers)
     name_to_ticker = {name: ticker for ticker, name in ticker_to_name.items()}
 
+    # Add a dropdown to select a stock using company names
     selected_name = st.selectbox('Select a Stock to View Holdings', options=sorted(name_to_ticker.keys()))
     selected_stock = name_to_ticker[selected_name]
-
-    # Convert transactions_df to transactions_data
+    
     transactions_data = transactions_df.to_dict('records')
 
+    # Get the stock history
     historical_df = get_stock_history(selected_stock, transactions_data)
 
+    # Calculate additional stats
+    # Get number of shares held
     shares_held = holdings.get(selected_stock, 0)
 
+    # Get current price
     ticker_obj = yf.Ticker(selected_stock)
     try:
         current_price = ticker_obj.history(period='1d')['Close'][0]
@@ -223,11 +231,13 @@ def display_stock_details(holdings, transactions_df):
     else:
         current_value = None
 
+    # Get total amount invested
     if historical_df is not None and not historical_df.empty:
         total_invested = historical_df['Value Paid'].iloc[-1]
     else:
         total_invested = None
 
+    # Compute profit and profit percentage
     if current_value is not None and total_invested is not None:
         profit = current_value - total_invested
         profit_percent = (profit / total_invested) * 100 if total_invested != 0 else None
@@ -235,16 +245,19 @@ def display_stock_details(holdings, transactions_df):
         profit = None
         profit_percent = None
 
+    # Compute average cost per share
     if shares_held > 0 and total_invested is not None:
         avg_cost_per_share = total_invested / shares_held
     else:
         avg_cost_per_share = None
 
+    # Get additional stats
     info = ticker_obj.info
     pe_ratio = info.get('trailingPE')
     market_cap = info.get('marketCap')
     dividend_yield = info.get('dividendYield')
 
+    # Display the stats
     st.markdown(f"### {selected_name} ({selected_stock})")
 
     col1, col2, col3 = st.columns(3)
@@ -256,8 +269,11 @@ def display_stock_details(holdings, transactions_df):
         col3.metric("Profit/Loss", "N/A")
 
     col4, col5, col6 = st.columns(3)
-    small_font_size = "16px"
 
+    # Define the desired smaller font size
+    small_font_size = "16px"  # Adjust this value as needed
+
+    # Column for Average Cost per Share
     col4.markdown(f"""
         <div style='font-size: {small_font_size}; text-align: center;'>
             <strong>Average Cost per Share</strong><br>
@@ -265,6 +281,7 @@ def display_stock_details(holdings, transactions_df):
         </div>
     """, unsafe_allow_html=True)
 
+    # Column for Current Price per Share
     col5.markdown(f"""
         <div style='font-size: {small_font_size}; text-align: center;'>
             <strong>Price per Share</strong><br>
@@ -272,6 +289,7 @@ def display_stock_details(holdings, transactions_df):
         </div>
     """, unsafe_allow_html=True)
 
+    # Column for Shares Held
     col6.markdown(f"""
         <div style='font-size: {small_font_size}; text-align: center;'>
             <strong>Shares Held</strong><br>
@@ -279,9 +297,12 @@ def display_stock_details(holdings, transactions_df):
         </div>
     """, unsafe_allow_html=True)
 
+    # Plot the graph
     if historical_df is not None and not historical_df.empty:
+        # Plot Value of Holdings and Value Invested over time on the same y-axis
         fig = go.Figure()
 
+        # Add "Value Invested" line
         fig.add_trace(go.Scatter(
             x=historical_df['Date'],
             y=historical_df['Value Paid'],
@@ -289,6 +310,7 @@ def display_stock_details(holdings, transactions_df):
             line=dict(color='#FFFFFF')
         ))
 
+        # Add "Value of Holdings" line
         fig.add_trace(go.Scatter(
             x=historical_df['Date'],
             y=historical_df['Value'],
@@ -296,6 +318,7 @@ def display_stock_details(holdings, transactions_df):
             line=dict(color='#FDE311')
         ))
 
+        # Update layout without dual y-axes
         fig.update_layout(
             xaxis_title='Date',
             yaxis_title='Value (USD)',
