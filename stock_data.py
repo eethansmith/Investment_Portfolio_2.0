@@ -17,10 +17,10 @@ def get_stock_history(ticker, transactions_data):
         return None
 
     # Sort transactions by date
-    transactions.sort(key=lambda x: datetime.strptime(x["Date"], '%d-%m-%Y'))
+    transactions.sort(key=lambda x: x["Date"])
 
     # Get the first purchase date and current date
-    start_date = datetime.strptime(transactions[0]["Date"], '%d-%m-%Y')
+    start_date = transactions[0]["Date"]
     end_date = datetime.now()
 
     stock = yf.Ticker(ticker)
