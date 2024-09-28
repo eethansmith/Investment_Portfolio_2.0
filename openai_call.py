@@ -20,7 +20,7 @@ def get_answer(prompt, info):
 
 def score_investment(investment_data):
     prompt = f"""
-        Using the following information provided, evaluate and rank the investment on a scale from 0-100, where 0 represents the worst possible outcome and 100 represents the best possible outcome. The goal is to analyze the stock investment's performance compared to broader benchmarks (e.g., S&P 500), sector performance, and market conditions, while taking into account the investor’s objectives, time horizon, and risk tolerance.
+        Using the following information provided, evaluate then provide a rank for the investment on a scale from 0-100, where 0 represents the worst possible outcome and 100 represents the best possible outcome. The goal is to grade the stock investment's performance compared to broader benchmarks (e.g., S&P 500), sector performance, and market conditions.
 
         ### Grading Scale:
         - **0-10**: Very Bad Investment – The stock has underperformed severely compared to market benchmarks and safer alternatives.
@@ -33,6 +33,8 @@ def score_investment(investment_data):
         - **70-80**: Very Good Investment – The stock has shown excellent growth.
         - **80-90**: Great Investment – The stock has delivered exceptional returns with minimal risk.
         - **90-100**: Outstanding Investment – The stock has significantly outperformed expectations with minimal risk.
+        
+        ### provide a integer score from 0-100 and a brief 1 paragraph explanation of why the investment falls within that range.
         """
 
     # Dynamically construct the 'info' string using investment_data
