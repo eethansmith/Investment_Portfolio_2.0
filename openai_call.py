@@ -1,13 +1,11 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
 
-# Load environment variables from a .env file
-load_dotenv()
+import streamlit as st
 
-# Initialize the OpenAI client
-api_key = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=api_key)
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+
+client = OpenAI(api_key=openai_api_key)
 
 def get_answer(prompt, info):
     response = client.chat.completions.create(
