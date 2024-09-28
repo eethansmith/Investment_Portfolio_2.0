@@ -3,6 +3,45 @@ import pandas as pd
 import yfinance as yf  
 from datetime import datetime  
 
+from openai_call import score_investment
+
+def prepare_investment_data_for_prompt(historical_df, ticker):
+    # Stock name (ticker)
+    stock_name = ticker
+
+    # Current stock price (latest value in the dataframe)
+    current_stock_price = historical_df.iloc[-1]["Price per Share"]
+
+    # Calculate average price paid per share
+    total_value_paid = historical_df.iloc[-1]["Value Paid"]
+    total_shares_held = historical_df.iloc[-1]["Shares Held"]
+    average_price_paid = total_value_paid / total_shares_held if total_shares_held != 0 else 0
+
+    # Percentage change since first purchase
+    initial_price = historical_df.iloc[0]["Price per Share"]
+    percentage_change = ((current_stock_price - initial_price) / initial_price) * 100 if initial_price != 0 else 0
+
+    # Holding duration in years
+    start_date = historical_df.iloc[0]["Date"]
+    end_date = historical_df.iloc[-1]["Date"]
+    holding_duration_years = (end_date - start_date).days / 365
+
+    # Create the data summary for the prompt
+    investment_data = {
+        "Stock Name": stock_name,
+        "Current Stock Price": current_stock_price,
+        "Average Price Paid per Share": average_price_paid,
+        "Percentage Change Since Investment": percentage_change,
+        "Holding Duration (years)": holding_duration_years,
+        "Shares Held": total_shares_held,
+        "Total Value Invested": total_value_paid,
+    }
+    print(f"look here!!! {investment_data}")
+    scoring_result = score_investment(investment_data)
+    return scoring_result
+    
+# --- End of Function to Get Stock History ---
+
 # --- Function to Get Stock History ---
 def get_stock_history(ticker, transactions_data):
     if not ticker:
@@ -84,5 +123,7 @@ def get_stock_history(ticker, transactions_data):
     # Convert historical_values to DataFrame
     historical_df = pd.DataFrame(historical_values)
     historical_df = historical_df.sort_values('Date')
-
-    return historical_df
+    
+    investment_data = prepare_investment_data_for_prompt(historical_df, ticker)
+    
+    return historical_df, investment_data

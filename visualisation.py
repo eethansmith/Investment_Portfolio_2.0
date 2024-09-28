@@ -5,6 +5,7 @@ import pandas as pd
 
 from utils import get_ticker_to_name
 from stock_data import get_stock_history
+from openai_call import score_investment
 
 def display_overall_holdings(total_current_value, total_invested_amount, total_profit_loss):
     """Display overall holdings at the top."""
@@ -84,7 +85,7 @@ def display_stock_details(holdings, transactions_df):
     transactions_data = transactions_df.to_dict('records')
 
     # Get the stock history
-    historical_df = get_stock_history(selected_stock, transactions_data)
+    historical_df, investment_data = get_stock_history(selected_stock, transactions_data)
 
     # Calculate additional stats
     # Get number of shares held
@@ -199,3 +200,5 @@ def display_stock_details(holdings, transactions_df):
         st.plotly_chart(fig)
     else:
         st.warning("No historical data available to display.")
+        
+    return (f" {investment_data} ")
