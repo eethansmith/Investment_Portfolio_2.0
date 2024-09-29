@@ -26,17 +26,21 @@ def prepare_investment_data_for_prompt(historical_df, ticker):
     end_date = historical_df.iloc[-1]["Date"]
     holding_duration_years = (end_date - start_date).days / 365
 
-    # Create the data summary for the prompt
+    # Format the data for clarity
     investment_data = {
         "Stock Name": stock_name,
-        "Current Stock Price": current_stock_price,
-        "Average Price Paid per Share": average_price_paid,
-        "Percentage Change Since Investment": percentage_change,
-        "Holding Duration (years)": holding_duration_years,
-        "Shares Held": total_shares_held,
-        "Total Value Invested": total_value_paid,
+        "Current Stock Price": f"${current_stock_price:.2f}",
+        "Average Price Paid per Share": f"${average_price_paid:.2f}",
+        "Percentage Change Since Investment": f"{percentage_change:.2f}%",
+        "Holding Duration (years)": f"{holding_duration_years:.2f} years",
+        "Shares Held": f"{total_shares_held:.2f} shares",
+        "Total Value Invested": f"${total_value_paid:.2f}",
     }
-    print(f"look here!!! {investment_data}")
+
+    # Print formatted output
+    print(f"Investment Data Summary: {investment_data}")
+    
+    # Process data (e.g., scoring) and return result
     scoring_result = score_investment(investment_data)
     return scoring_result
     
