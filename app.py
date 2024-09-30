@@ -71,10 +71,40 @@ def score_to_color_bar(score):
     """
     return bar_html
 
-# Display detailed stock information
+# Display WAYNE AI detailed stock assessment
 
 explaination, score = display_stock_details(holdings, transactions_df)
 
+# Define assessment based on score ranges
+if score is not None:
+    if 0 <= score <= 10:
+        assessment = "Very Bad Investment"
+    elif 10 < score <= 20:
+        assessment = "Poor Investment"
+    elif 20 < score <= 30:
+        assessment = "Below Average Investment"
+    elif 30 < score <= 40:
+        assessment = "Slightly Underperforming"
+    elif 40 < score <= 50:
+        assessment = "Average Investment"
+    elif 50 < score <= 60:
+        assessment = "Slightly Above Average Investment"
+    elif 60 < score <= 70:
+        assessment = "Good Investment"
+    elif 70 < score <= 80:
+        assessment = "Very Good Investment"
+    elif 80 < score <= 90:
+        assessment = "Great Investment"
+    elif 90 < score <= 100:
+        assessment = "Outstanding Investment"
+    else:
+        assessment = "Invalid Score"
+else:
+    assessment = "No score available"
+
+# Display the assessment in Streamlit
+st.markdown(f"### {assessment}")
+
 st.markdown(score_to_color_bar(score), unsafe_allow_html=True)
 
-st.write(f"{explaination}")
+st.write(f"*{explaination}*")

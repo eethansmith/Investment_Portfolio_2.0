@@ -124,12 +124,6 @@ def display_stock_details(holdings, transactions_df):
     else:
         avg_cost_per_share = None
 
-    # Get additional stats
-    info = ticker_obj.info
-    pe_ratio = info.get('trailingPE')
-    market_cap = info.get('marketCap')
-    dividend_yield = info.get('dividendYield')
-
     # Display the stats
     st.markdown(f"### {selected_name} ({selected_stock})")
 
@@ -216,5 +210,6 @@ def display_stock_details(holdings, transactions_df):
     print (explanation)
     explanation = re.sub(r'(?<!\$)\$(?!\$)', '\$', explanation)
     explanation = re.sub(r'\*', '', explanation)
+    explanation = re.sub(r'\**', '', explanation)
     
     return explanation, score
