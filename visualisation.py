@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import yfinance as yf
 import pandas as pd
+import re
 
 from utils import get_ticker_to_name
 from stock_data import get_stock_history
@@ -85,7 +86,7 @@ def display_stock_details(holdings, transactions_df):
     transactions_data = transactions_df.to_dict('records')
 
     # Get the stock history
-    historical_df, investment_data = get_stock_history(selected_stock, transactions_data)
+    historical_df, investment_score = get_stock_history(selected_stock, transactions_data)
 
     # Calculate additional stats
     # Get number of shares held
@@ -201,4 +202,12 @@ def display_stock_details(holdings, transactions_df):
     else:
         st.warning("No historical data available to display.")
         
-    return (f" {investment_data} ")
+    # Extract the score (first integer between 0 and 100)
+    match = re.search(r'\b(100|[1-9]?\d)\b', investment_score)
+    if match:
+        score = int(match.group(0))  # Extracted score
+
+    # Extract explanation (everything after "Score: <score>")
+    explanation = investment_score.split(f"Score: {score}", 1)[-1].strip()
+        
+    return (f" {explanation} ")

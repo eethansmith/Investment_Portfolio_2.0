@@ -19,7 +19,9 @@ def prepare_investment_data_for_prompt(historical_df, ticker):
 
     # Percentage change since first purchase
     initial_price = historical_df.iloc[0]["Price per Share"]
-    percentage_change = (current_stock_price - initial_price) * 100 if initial_price != 0 else 0
+    
+    profit = (current_stock_price * total_shares_held) - total_value_paid
+    percentage_change = (profit / total_value_paid) * 100 if initial_price != 0 else 0
 
     # Holding duration in years
     start_date = historical_df.iloc[0]["Date"]

@@ -9,7 +9,6 @@ import plotly.graph_objects as go
 from datetime import datetime
 import time
 
-from stock_data import get_stock_history
 from data_processing import process_transactions
 from financial_calculations import calculate_current_values
 from visualisation import display_overall_holdings, create_pie_chart, display_stock_details
@@ -55,4 +54,4 @@ create_pie_chart(holdings_df)
 st.markdown("Visual representation of my current stock holdings in my investment portfolio. This application is a remake of the original [Investment Portfolio Project](https://github.com/eethansmith/Investment-Portfolio-Project) I built using a React frontend and Django backend API in December 2023. Utilised yfinance to obtain live data along with investment transactions from my FreeTrade account. I wanted to recreate this project using Streamlit for ease of use and deployment whilst experimenting with more generative AI functionality.")  
 
 # Display detailed stock information
-st.markdown(f"{display_stock_details(holdings, transactions_df)}")
+st.write(f"{display_stock_details(holdings, transactions_df)}")
