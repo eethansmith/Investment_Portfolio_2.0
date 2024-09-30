@@ -48,6 +48,7 @@ def score_investment(investment_data):
     Total Value Invested: {investment_data['Total Value Invested']}
 
     Please provide a score from 0-100 and a brief explanation of why the investment falls within that range.
+    Score: 
     """
 
     scoring = get_answer(prompt, info)

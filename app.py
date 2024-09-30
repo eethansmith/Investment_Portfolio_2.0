@@ -53,5 +53,28 @@ create_pie_chart(holdings_df)
 # Display your markdown text
 st.markdown("Visual representation of my current stock holdings in my investment portfolio. This application is a remake of the original [Investment Portfolio Project](https://github.com/eethansmith/Investment-Portfolio-Project) I built using a React frontend and Django backend API in December 2023. Utilised yfinance to obtain live data along with investment transactions from my FreeTrade account. I wanted to recreate this project using Streamlit for ease of use and deployment whilst experimenting with more generative AI functionality.")  
 
+# Function to create color-coded bar based on the score
+def score_to_color_bar(score):
+    # Determine the color based on the score
+    if score <= 33:
+        color = 'red'
+    elif score <= 66:
+        color = 'amber'
+    else:
+        color = 'green'
+    
+    # Create a styled div with a width proportional to the score
+    bar_html = f"""
+    <div style="width: 100%; background-color: lightgray; border-radius: 5px; margin: 10px 0;">
+        <div style="width: {score}%; background-color: {color}; height: 20px; border-radius: 5px;"></div>
+    </div>
+    """
+    return bar_html
+
 # Display detailed stock information
-st.write(f"{display_stock_details(holdings, transactions_df)}")
+
+explaination, score = display_stock_details(holdings, transactions_df)
+
+st.markdown(score_to_color_bar(score), unsafe_allow_html=True)
+
+st.write(f"{explaination}")

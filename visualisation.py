@@ -201,13 +201,20 @@ def display_stock_details(holdings, transactions_df):
         st.plotly_chart(fig)
     else:
         st.warning("No historical data available to display.")
-        
-    # Extract the score (first integer between 0 and 100)
-    match = re.search(r'\b(100|[1-9]?\d)\b', investment_score)
-    if match:
-        score = int(match.group(0))  # Extracted score
 
-    # Extract explanation (everything after "Score: <score>")
-    explanation = investment_score.split(f"Score: {score}", 1)[-1].strip()
-        
-    return (f" {explanation} ")
+    # Use regex to match either "Score: <number>" or just "<number>"
+    match = re.search(r'(?:Score:\s*)?(100|[1-9]?\d)', investment_score, re.IGNORECASE)
+    
+    if match:
+        score = int(match.group(1))  # Extract the score from the match
+        # Extract explanation, everything after the matched score, if any
+        explanation = investment_score[match.end():].strip()
+    else:
+        # Handle cases where no score is found
+        score = None
+        explanation = investment_score.strip()  # Return the full string as explanation
+    print (explanation)
+    explanation = re.sub(r'(?<!\$)\$(?!\$)', '\$', explanation)
+    explanation = re.sub(r'\*', '', explanation)
+    
+    return explanation, score
