@@ -51,7 +51,7 @@ holdings_df = pd.DataFrame({
 create_pie_chart(holdings_df)
 
 # Display your markdown text
-st.markdown("Visual representation of my current stock holdings in my investment portfolio. This application is a remake of the original [Investment Portfolio Project](https://github.com/eethansmith/Investment-Portfolio-Project) I built using a React frontend and Django backend API in December 2023. Utilised yfinance to obtain live data along with investment transactions from my FreeTrade account. I wanted to recreate this project using Streamlit for ease of use and deployment whilst experimenting with more generative AI functionality.")  
+st.caption("Visual representation of my live stock holdings from my investment portfolio. This application is a remake of the original [Investment Portfolio Project](https://github.com/eethansmith/Investment-Portfolio-Project) I built using a React frontend and Django backend API in December 2023. Utilised yfinance to obtain live data along with investment transactions from my FreeTrade account. I wanted to recreate this project using Streamlit for ease of use and deployment whilst experimenting with more generative AI functionality.")  
 
 # Function to create color-coded bar based on the score
 def score_to_color_bar(score):
@@ -78,25 +78,19 @@ explaination, score = display_stock_details(holdings, transactions_df)
 # Define assessment based on score ranges
 if score is not None:
     if 0 <= score <= 10:
-        assessment = "Very Bad Investment"
+        assessment = ":red[Very Poor Investment]"
     elif 10 < score <= 20:
-        assessment = "Poor Investment"
-    elif 20 < score <= 30:
-        assessment = "Below Average Investment"
-    elif 30 < score <= 40:
-        assessment = "Slightly Underperforming"
-    elif 40 < score <= 50:
-        assessment = "Average Investment"
-    elif 50 < score <= 60:
-        assessment = "Slightly Above Average Investment"
+        assessment = ":red[Poor Investment]"
+    elif 20 < score <= 40:
+        assessment = ":orange[Underperforming Investment]"
+    elif 40 < score <= 60:
+        assessment = ":yellow[Average Investment]"
     elif 60 < score <= 70:
-        assessment = "Good Investment"
-    elif 70 < score <= 80:
-        assessment = "Very Good Investment"
-    elif 80 < score <= 90:
-        assessment = "Great Investment"
-    elif 90 < score <= 100:
-        assessment = "Outstanding Investment"
+        assessment = ":green[Good Investment]"
+    elif 70 < score <= 85:
+        assessment = ":green[Great Investment]"
+    elif 85 < score <= 100:
+        assessment = ":green[Outstanding Investment]"
     else:
         assessment = "Invalid Score"
 else:
@@ -107,4 +101,4 @@ st.markdown(f"### {assessment}")
 
 st.markdown(score_to_color_bar(score), unsafe_allow_html=True)
 
-st.write(f"*{explaination}*")
+st.caption(f"{explaination}")

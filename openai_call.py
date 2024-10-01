@@ -34,7 +34,7 @@ def score_investment(investment_data):
         - **80-90**: Great Investment – The stock has delivered exceptional returns with minimal risk.
         - **90-100**: Outstanding Investment – The stock has significantly outperformed expectations with minimal risk.
         
-        ### provide a integer score from 0-100 and a brief 1 paragraph explanation of why the investment falls within that range.
+        ### provide an exact integer score from 0-100 and a brief under 1 paragraph explanation of why the investment falls within that range.
         """
 
     # Dynamically construct the 'info' string using investment_data
@@ -48,8 +48,7 @@ def score_investment(investment_data):
     Total Value Invested: {investment_data['Total Value Invested']}
 
     Please provide a score from 0-100 and a brief explanation of why the investment falls within that range.
-    Score: 
-    """
+    Score:"""
 
     scoring = get_answer(prompt, info)
     return scoring
