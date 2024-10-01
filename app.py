@@ -56,10 +56,12 @@ st.caption("Visual representation of my live stock holdings from my investment p
 # Function to create color-coded bar based on the score
 def score_to_color_bar(score):
     # Determine the color based on the score
-    if score <= 33:
+    if score <= 20:
         color = 'red'
-    elif score <= 66:
-        color = 'amber'
+    elif score <= 40:
+        color = 'orange'
+    elif score <= 60:
+        color = 'yellow'
     else:
         color = 'green'
     
@@ -84,7 +86,7 @@ if score is not None:
     elif 20 < score <= 40:
         assessment = ":orange[Underperforming Investment]"
     elif 40 < score <= 60:
-        assessment = ":yellow[Average Investment]"
+        assessment = ":orange[Average Investment]"
     elif 60 < score <= 70:
         assessment = ":green[Good Investment]"
     elif 70 < score <= 85:
