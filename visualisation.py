@@ -19,47 +19,42 @@ def display_overall_holdings(total_current_value, total_invested_amount, total_p
             col3.metric("Profit/Loss", f"${total_profit_loss:,.2f}", f"{total_profit_loss_percent:.2f}%")
     else:
         col3.metric("Profit/Loss", "N/A")
+        
+        import plotly.graph_objects as go
+import streamlit as st
 
-    
 def create_pie_chart(holdings_df):
-    """Create and display the enhanced pie chart."""
+    """Create and display the enhanced pie chart with stock categories."""
     
-    
-    yellow = (253, 227, 17)
-    dark_navy = (12, 35, 64)        
-    grey = (93, 93, 93)             
+    # Add a new column for the stock categories
+    holdings_df['Category'] = holdings_df['Ticker'].apply(lambda ticker: 
+        'S&P 500' if ticker == 'VUAG.L' else
+        'Tech' if ticker in ['PLTR', 'AAPL', 'MSFT', 'META', 'AMZN', 'GOOG', 'NVDA', 'ZS', 'CRWD', 'INTC', 'ORCL', 'DELL', 'IBM'] else
+        'Finance' if ticker == 'BLK' else
+        'Other'
+    )
 
-    num_shades = len(holdings_df)
-    shades_of_col = []
+    # Define custom colors for the categories
+    category_colors = {
+        'Tech': '#FEFF99',     # light yellow
+        'S&P 500': '#C4DFF3',  # light blue
+        'Finance': '#A5A9AC',  # grey
+        'Other': '#CCCCCC'     # default grey for other category
+    }
 
-    def interpolate_color(color1, color2, factor):
-        return tuple(
-            int(color1[i] + (color2[i] - color1[i]) * factor)
-            for i in range(3)
-        )
+    # Map colors to the categories in the DataFrame
+    holdings_df['Color'] = holdings_df['Category'].map(category_colors)
 
-    if num_shades == 1:
-        shades_of_col = [f'rgb{yellow}']
-    else:
-        for i in range(num_shades):
-            factor = i / (num_shades - 1)
-            if factor <= 0.5:
-                # Interpolate between yellow and grey
-                interp_factor = factor / 0.5
-                color_rgb = interpolate_color(yellow, grey, interp_factor)
-            else:
-                # Interpolate between grey and dark navy
-                interp_factor = (factor - 0.5) / 0.5
-                color_rgb = interpolate_color(grey, dark_navy, interp_factor)
-            shades_of_col.append(f'rgb{color_rgb}')
+    # Ensure that 'Profit/Loss' column contains numeric values and replace NaN with 0 or another placeholder
+    holdings_df['Profit/Loss'] = holdings_df['Profit/Loss'].fillna(0)  # Replace NaN with 0 or any default value
 
     # Create the pie chart with hover information
     fig = go.Figure(data=[go.Pie(
-        labels=holdings_df['Ticker'],
+        labels=holdings_df['Category'],  # Use category instead of ticker
         values=holdings_df['Current Value Numeric'],
-        marker=dict(colors=shades_of_col),
+        marker=dict(colors=holdings_df['Color']),
         textinfo='label+percent',
-        hovertemplate='<b>%{label}</b><br>Current Value: %{value:$,.2f}<br>Profit/Loss: %{customdata:$,.2f}',
+        hovertemplate='<b>%{label}</b><br>Current Value: %{value:$,.2f}<br>Profit/Loss: %{customdata:$,.2f}<extra></extra>',  # Removed 'trace 0'
         customdata=holdings_df['Profit/Loss']
     )])
 
@@ -69,7 +64,10 @@ def create_pie_chart(holdings_df):
 
     # Display the pie chart
     st.plotly_chart(fig)
-    
+
+
+
+
 
     
 def display_stock_details(holdings, transactions_df):
