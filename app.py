@@ -52,7 +52,7 @@ create_pie_chart(holdings_df)
 
 # Display your markdown text
 st.caption("Visual representation of my live stock holdings from my investment portfolio. This application is a remake of the original [Investment Portfolio Project](https://github.com/eethansmith/Investment-Portfolio-Project) I built using a React frontend and Django backend API in December 2023. Utilised yfinance to obtain live data along with investment transactions from my FreeTrade account. I wanted to recreate this project using Streamlit for ease of use and deployment whilst experimenting with more generative AI functionality.")  
-
+st.caption("The investment data has been extracted from my FreeTrade account spanning back to my very first trade of Apple Stock in November 2020. Each trade is stored in a JSON file and processed to display the current value of my stock portfolio live.")
 # Function to create color-coded bar based on the score
 def score_to_color_bar(score):
     # Determine the color based on the score

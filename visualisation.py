@@ -54,11 +54,9 @@ def create_pie_chart(holdings_df):
         hovertemplate='<b>%{label}</b><br>Current Value: %{value:$,.2f}<br>Profit/Loss: %{customdata:$,.2f}<extra></extra>',  # Removed 'trace 0'
         customdata=holdings_df['Profit/Loss']
     )])
-
     fig.update_layout(
         showlegend=True
     )
-
     # Display the pie chart
     st.plotly_chart(fig)
 
