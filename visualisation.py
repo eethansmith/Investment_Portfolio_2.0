@@ -19,9 +19,6 @@ def display_overall_holdings(total_current_value, total_invested_amount, total_p
             col3.metric("Profit/Loss", f"${total_profit_loss:,.2f}", f"{total_profit_loss_percent:.2f}%")
     else:
         col3.metric("Profit/Loss", "N/A")
-        
-        import plotly.graph_objects as go
-import streamlit as st
 
 def create_pie_chart(holdings_df):
     """Create and display the enhanced pie chart with stock categories."""
@@ -64,6 +61,7 @@ def create_pie_chart(holdings_df):
 
     # Display the pie chart
     st.plotly_chart(fig)
+
 
 
 
