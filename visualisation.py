@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
+import plotly.express as px
 import yfinance as yf
 import pandas as pd
 import re
@@ -20,10 +21,12 @@ def display_overall_holdings(total_current_value, total_invested_amount, total_p
     else:
         col3.metric("Profit/Loss", "N/A")
 
+
+
 def create_pie_chart(holdings_df):
-    """Create and display the enhanced pie chart with stock categories."""
+    """Create and display a sunburst chart with stock categories and individual holdings."""
     
-    # Add a new column for the stock categories
+    # Add a new column for the stock categories (if not already added)
     holdings_df['Category'] = holdings_df['Ticker'].apply(lambda ticker: 
         'S&P 500' if ticker == 'VUAG.L' else
         'Tech' if ticker in ['PLTR', 'AAPL', 'MSFT', 'META', 'AMZN', 'GOOG', 'NVDA', 'ZS', 'CRWD', 'INTC', 'ORCL', 'DELL', 'IBM'] else
@@ -33,41 +36,32 @@ def create_pie_chart(holdings_df):
 
     # Define custom colors for the categories
     category_colors = {
-        'Tech': '#FEFF99',     # light yellow
-        'S&P 500': '#C4DFF3',  # light blue
-        'Finance': '#A5A9AC',  # grey
+        'Tech': '#0A6BC4',   
+        'S&P 500': '#CF2129',  
+        'Finance': '#02B414',
         'Other': '#CCCCCC'     # default grey for other category
     }
 
-    # Map colors to the categories in the DataFrame
-    holdings_df['Color'] = holdings_df['Category'].map(category_colors)
+    # Ensure that 'Profit/Loss' column contains numeric values and replace NaN with 0
+    holdings_df['Profit/Loss'] = holdings_df['Profit/Loss'].fillna(0)
 
-    # Ensure that 'Profit/Loss' column contains numeric values and replace NaN with 0 or another placeholder
-    holdings_df['Profit/Loss'] = holdings_df['Profit/Loss'].fillna(0)  # Replace NaN with 0 or any default value
-
-    # Create the pie chart with hover information
-    fig = go.Figure(data=[go.Pie(
-        labels=holdings_df['Category'],  # Use category instead of ticker
-        values=holdings_df['Current Value Numeric'],
-        marker=dict(colors=holdings_df['Color']),
-        textinfo='label+percent',
-        hovertemplate='<b>%{label}</b><br>Current Value: %{value:$,.2f}<extra></extra>',  # Removed 'trace 0'
-        customdata=holdings_df['Profit/Loss'],
-        hole=.4
-    )])
-    fig.update_layout(
-        showlegend=True
+    # Create the sunburst chart
+    fig = px.sunburst(
+        data_frame=holdings_df,
+        path=['Category', 'Ticker'],
+        values='Current Value Numeric',
+        color='Category',
+        color_discrete_map=category_colors,
+        hover_data={'Profit/Loss': ':.2f', 'Current Value Numeric': ':.2f'},
     )
-    fig.update_traces(textfont_size=17,
-            marker=dict(line=dict(color='#000000', width=2)))
-
     
-    # Display the pie chart
+    fig.update_traces(
+        textinfo='label+percent entry',
+        hovertemplate='<b>%{label}</b><br>Current Value: $%{value:,.2f}<br>Profit/Loss: $%{customdata[0]:,.2f}<extra></extra>'
+    )
+
+    # Display the sunburst chart
     st.plotly_chart(fig)
-
-
-
-
 
 
     
