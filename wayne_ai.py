@@ -20,7 +20,7 @@ def get_answer(prompt, info):
 
 def score_investment(investment_data):
     prompt = f"""
-        Using the following grading criteria provided, evaluate then provide a score for the investment on a scale from 0-100, The goal is to grade the stock investment's performance compared to broader benchmarks (e.g., S&P 500), sector performance, and market conditions. Use the following grading scale to provide a score and a brief explanation of why the investment falls at that score.
+        Using the following grading criteria provided, evaluate then provide a score for the investment on a scale from 0-100, The goal is to grade the stock investment's performance compared to broader benchmarks (S&P 500 5 Year Return is at 93.01%, S&P 500 1 Year Return at 25.31%), sector performance, and market conditions. Use the following grading scale to provide a score and a brief explanation of why the investment falls at that score.
 
         ### Grading Scale:
         - **0-10**: A Very Bad Investment where the stock has underperformed severely compared to market benchmarks and safer alternatives.
