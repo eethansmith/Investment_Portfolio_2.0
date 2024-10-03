@@ -37,8 +37,8 @@ def create_pie_chart(holdings_df):
     # Define custom colors for the categories
     category_colors = {
         'Tech': '#0A6BC4',   
-        'S&P 500': '#CF2129',  
-        'Finance': '#02B414',
+        'S&P 500': '#B4BEC9',  
+        'Finance': '#FEBC4C',
         'Other': '#CCCCCC'     # default grey for other category
     }
 
