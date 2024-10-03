@@ -1,5 +1,6 @@
 from openai import OpenAI
 from dotenv import load_dotenv
+import yfinance as yf
 
 import streamlit as st
 
@@ -38,13 +39,19 @@ def score_investment(investment_data):
         ### provide an exact integer score from 0-100 and a brief explanation of why the investment falls within that range. Score must not be a multiple of 10.
         """
 
+    # Fetch the company info using yfinance
+    ticker = yf.Ticker(investment_data['Stock Name'])
+    company_name = ticker.info.get('longName', 'Company name not available')
+
+
     # Dynamically construct the 'info' string using investment_data
     info = f"""
-    Stock Name: {investment_data['Stock Name']},
+    Stock Name: {company_name}({ticker}),
     Current Stock Price: {investment_data['Current Stock Price']},
     Average Price Paid per Share: {investment_data['Average Price Paid per Share']},
     Percentage Change Since Investment: {investment_data['Percentage Change Since Investment']},
-    Holding Duration (years): {investment_data['Holding Duration (years)']},
+    
+    Orginal Trade Placement (years): {investment_data['Holding Duration (years)']},
     Shares Held: {investment_data['Shares Held']},
     Total Value Invested: {investment_data['Total Value Invested']}
     
