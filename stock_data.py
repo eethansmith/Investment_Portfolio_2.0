@@ -3,7 +3,7 @@ import pandas as pd
 import yfinance as yf  
 from datetime import datetime  
 
-from openai_call import score_investment
+from wayne_ai import score_investment
 
 def prepare_investment_data_for_prompt(historical_df, ticker):
     # Stock name (ticker)
