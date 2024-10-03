@@ -7,7 +7,7 @@ import re
 
 from utils import get_ticker_to_name
 from stock_data import get_stock_history
-from openai_call import score_investment
+from wayne_ai import score_investment
 
 def display_overall_holdings(total_current_value, total_invested_amount, total_profit_loss):
     """Display overall holdings at the top."""
