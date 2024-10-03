@@ -51,12 +51,17 @@ def create_pie_chart(holdings_df):
         values=holdings_df['Current Value Numeric'],
         marker=dict(colors=holdings_df['Color']),
         textinfo='label+percent',
-        hovertemplate='<b>%{label}</b><br>Current Value: %{value:$,.2f}<br>Profit/Loss: %{customdata:$,.2f}<extra></extra>',  # Removed 'trace 0'
-        customdata=holdings_df['Profit/Loss']
+        hovertemplate='<b>%{label}</b><br>Current Value: %{value:$,.2f}<extra></extra>',  # Removed 'trace 0'
+        customdata=holdings_df['Profit/Loss'],
+        hole=.4
     )])
     fig.update_layout(
         showlegend=True
     )
+    fig.update_traces(textfont_size=17,
+            marker=dict(line=dict(color='#000000', width=2)))
+
+    
     # Display the pie chart
     st.plotly_chart(fig)
 
@@ -185,7 +190,7 @@ def display_stock_details(holdings, transactions_df):
             yaxis_title='Value (USD)',
             legend=dict(x=0.01, y=0.99)
         )
-
+        
         st.plotly_chart(fig)
     else:
         st.warning("No historical data available to display.")
