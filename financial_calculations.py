@@ -20,7 +20,7 @@ def calculate_current_values(holdings, transactions_df):
         ticker_obj = yf.Ticker(ticker)
         try:
             # Attempt to get the current price
-            current_price = ticker_obj.history(period='1d')['Close'][0]
+            current_price = ticker_obj.history(period='1d')['Close'].iloc[0]
 
             current_value = current_price * shares
             current_values[ticker] = current_value
