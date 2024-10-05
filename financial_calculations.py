@@ -22,6 +22,7 @@ def calculate_current_values(holdings, transactions_df):
             # Attempt to get the current price
             current_price = ticker_obj.history(period='1d')['Close'].iloc[0]
 
+
             current_value = current_price * shares
             current_values[ticker] = current_value
             total_current_value += current_value
@@ -45,6 +46,7 @@ def calculate_current_values(holdings, transactions_df):
 
         except Exception as e:
             current_values[ticker] = 0.0
+            profit_loss_per_stock[ticker] = 0.0  # Set a default value for profit/loss
             st.error(f"Failed to retrieve price for {ticker}: {e}")
 
     # Calculate total profit or loss
