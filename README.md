@@ -2,6 +2,9 @@
 Remastered Version of Investment Portfolio Project utilsing streamlit
 https://eethansmith-investment-portfolio-2.streamlit.app/
 
+## TO DO LIST
+# MAKE CLASS FOR STOCK HOLDINGS
+
 # Navigate to your project directory
 cd /path/to/your/project/directory
 
