@@ -6,7 +6,7 @@ import os
 def save_stock_prices_to_json():
     # List of stock tickers
     tickers = ['GOOG', 'AMZN', 'AAPL', 'BLK', 'CRWD', 'DELL', 'INTC', 'META', 
-               'MSFT', 'NVDA', 'ORCL', 'PLTR', 'VUAG.L', 'ZS']
+               'MSFT', 'NVDA', 'ORCL', 'PLTR', 'VUAG.L', 'ZS', 'IBM']
     
     # Dictionary to store ticker and its current price
     stock_data = {}
