@@ -10,18 +10,27 @@ import time
 
 def calculate_current_values(holdings, transactions_df):
     """Calculate current values and profit/loss per stock."""
-    # --- Calculate Current Values and Total Portfolio Value ---
     current_values = {}
     profit_loss_per_stock = {}
     total_current_value = 0.0
     total_invested_amount = 0.0
+    hardcoded_prices = {'AMZN': 130.0, 'AAPL': 150.0, 'GOOGL': 2700.0}  # Update with actual values
 
     for ticker, shares in holdings.items():
         ticker_obj = yf.Ticker(ticker)
         try:
-            # Attempt to get the current price
-            current_price = ticker_obj.history(period='1d')['Close'].iloc[0]
-
+            history = ticker_obj.history(period='1d')
+            if not history.empty:
+                current_price = history['Close'].iloc[0]
+            else:
+                # Try a longer period
+                history = ticker_obj.history(period='7d')
+                if not history.empty:
+                    current_price = history['Close'].iloc[-1]
+                else:
+                    # Use hardcoded value
+                    current_price = hardcoded_prices.get(ticker, 0.0)
+                    st.warning(f"Using hardcoded price for {ticker}")
 
             current_value = current_price * shares
             current_values[ticker] = current_value
