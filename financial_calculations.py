@@ -21,11 +21,11 @@ def calculate_current_values(holdings, transactions_df):
     total_invested_amount = 0.0
 
     for ticker, shares in holdings.items():
-        stock = yf.Ticker(ticker)
         try:
             stock = yf.Ticker(ticker)
-            stock_info = stock.history(period="1d")
+            stock_info = stock.history(period="1d")['Close'].iloc[-1]  # Get the most recent closing price
 
+            # Calculate current value based on fetched stock price
             current_value = stock_info * shares
             current_values[ticker] = current_value
             total_current_value += current_value
