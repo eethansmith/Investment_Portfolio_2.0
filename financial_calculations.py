@@ -8,6 +8,8 @@ import plotly.graph_objects as go
 from datetime import datetime
 import time
 
+from cache_stock import cache_stock_prices
+
 # Load fallback stock prices from JSON
 with open('stock_prices.json', 'r') as f:
     fallback_prices = json.load(f)
@@ -46,6 +48,9 @@ def calculate_current_values(holdings, transactions_df):
             # Calculate profit or loss for this stock
             profit_loss = current_value - total_invested
             profit_loss_per_stock[ticker] = profit_loss
+            
+            cache_stock_prices()
+            
 
         except Exception as e:
             # If there is an issue with fetching data, use the fallback price from the JSON file

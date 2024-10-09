@@ -3,7 +3,7 @@ import json
 import os
 
 # Function to fetch stock prices and save them as a .json file
-def save_stock_prices_to_json():
+def cache_stock_prices():
     # List of stock tickers
     tickers = ['GOOG', 'AMZN', 'AAPL', 'BLK', 'CRWD', 'DELL', 'INTC', 'META', 
                'MSFT', 'NVDA', 'ORCL', 'PLTR', 'VUAG.L', 'ZS', 'IBM']
