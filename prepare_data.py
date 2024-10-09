@@ -41,10 +41,6 @@ def prepare_investment_data_for_prompt(historical_df, ticker):
             "Shares Held": f"{total_shares_held:.2f} shares",
             "Total Value Invested": f"${total_value_paid:.2f}",
         }
-
-        # Print formatted output
-        print(f"Investment Data Summary: {investment_data}")
-
         # Process data (e.g., scoring) and return result
         scoring_result = score_investment(investment_data)
         return scoring_result

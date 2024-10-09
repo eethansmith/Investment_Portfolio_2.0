@@ -26,7 +26,3 @@ def cache_stock_price(ticker):
         # Save the updated stock data back to the JSON file
         with open(file_path, 'w') as json_file:
             json.dump(stock_data, json_file, indent=4)
-        
-        print(f"Price for {ticker} updated: {stock_data[ticker]}")
-    else:
-        print(f"Warning: No data found for {ticker}, possibly delisted.")

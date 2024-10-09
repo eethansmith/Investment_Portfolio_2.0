@@ -199,7 +199,6 @@ def display_stock_details(holdings, transactions_df):
         # Handle cases where no score is found
         score = None
         explanation = investment_score.strip()  # Return the full string as explanation
-    print (explanation)
     explanation = re.sub(r'(?<!\$)\$(?!\$)', '\$', explanation)
     explanation = explanation.replace('\n', '')
     explanation = explanation.replace('*', '')

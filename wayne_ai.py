@@ -21,23 +21,31 @@ def get_answer(prompt, info):
 
 def score_investment(investment_data):
     prompt = f"""
-        Using the following grading criteria provided, evaluate then provide a score for the investment on a scale from 0-100, The goal is to grade the stock investment's performance compared to broader benchmarks where the S&P 500's 5 Year Return is at 93.01%, 1 Year Return at 25.31%, sector performance, and market conditions. 
-        Use the following grading scale to provide a score and a brief explanation of why the investment falls at that score.
+    Based on the grading criteria below, evaluate and provide a score for this stock investment on a scale of 0-100. Consider its performance relative to the broader market benchmarks, including the S&P 500's 5-Year Return of 93.01%, 1-Year Return of 25.31%, sector performance, and prevailing market conditions.
 
-        ### Grading Scale:
-        - **0-10**: An Investment where the stock has underperformed severely compared to market benchmarks and safer alternatives.
-        - **10-20**: A Poor Investment where this stock has underperformed and has shown significant volatility or low returns.
-        - **20-30**: This investment is seen as Below Average and underperformed slightly or remained stagnant.
-        - **30-40**: An investment is growing but at a slower pace than the market average thus landing Slightly Underperforming .
-        - **40-50**: The stock has performed in line with market averages at 7-10% per anum or inline with S&P500.
-        - **50-60**: An investment that is Slightly Above Average where the stock is performing better than market benchmarks 7-10% but marginnaly.
-        - **60-70**: The stock has performed well, exceeding market expectations outporforming the 10% market benchmark.
-        - **70-80**: The stock has shown excellent growth in the period invested and assesed retrospectively as a Great choice on investment.
-        - **80-90**: The stock has delivered exceptional returns with minimal risk and performed exceedingly above the benchmark.
-        - **90-100**: An Outstanding Investment that was well timed, shown exceeding performance and The stock has significantly outperformed expectations.
-        
-        ### provide an exact integer score from 0-100 and a brief explanation of why the investment falls within that range. Score must not be a multiple of 10.
-        """
+    When scoring, account for factors such as:
+    - **Sector performance**: How the stock compares within its industry.
+    - **Market volatility**: Impact of market-wide risk or stock-specific fluctuations.
+    - **Return on Investment (ROI)**: Performance over the investment period compared to the market.
+
+    ### Grading Scale:
+    - **0-10**: Severe underperformance, high risk, or poor return relative to safer alternatives.
+    - **10-20**: Poor performance, substantial volatility, or consistently low returns.
+    - **20-30**: Below-average investment, marginal returns, or stagnant growth.
+    - **30-40**: Slight underperformance, moderate growth but lags behind benchmarks.
+    - **40-50**: Average performance, in line with S&P 500 or market norms.
+    - **50-60**: Slightly above-average performance, moderately exceeding market benchmarks.
+    - **60-70**: Strong performance, consistently exceeding market benchmarks by a good margin.
+    - **70-80**: Great investment, showing excellent growth and competitive returns.
+    - **80-90**: Exceptional performance with low risk and significant outperformance.
+    - **90-100**: Outstanding investment, excellent timing, and substantial outperformance.
+
+    ### Provide an exact integer score from 0-100 (not a multiple of 10) and a brief explanation considering:
+    - Stock performance relative to its sector and market.
+    - Level of risk/volatility experienced during the investment period.
+    - Overall return compared to benchmarks and the investment’s timing.
+
+    """
 
     # Fetch the company info using yfinance
     ticker = yf.Ticker(investment_data['Stock Name'])
