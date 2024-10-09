@@ -30,6 +30,3 @@ def cache_stock_price(ticker):
         print(f"Price for {ticker} updated: {stock_data[ticker]}")
     else:
         print(f"Warning: No data found for {ticker}, possibly delisted.")
-
-# Example usage
-cache_stock_price('AAPL')  # This will only update AAPL in the JSON file
