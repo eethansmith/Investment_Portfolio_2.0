@@ -49,7 +49,7 @@ def calculate_current_values(holdings, transactions_df):
             profit_loss = current_value - total_invested
             profit_loss_per_stock[ticker] = profit_loss
             
-            cache_stock_prices()
+            cache_stock_prices(ticker)
             
 
         except Exception as e:

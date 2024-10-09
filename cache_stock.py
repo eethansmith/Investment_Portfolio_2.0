@@ -2,32 +2,34 @@ import yfinance as yf
 import json
 import os
 
-# Function to fetch stock prices and save them as a .json file
-def cache_stock_prices():
-    # List of stock tickers
-    tickers = ['GOOG', 'AMZN', 'AAPL', 'BLK', 'CRWD', 'DELL', 'INTC', 'META', 
-               'MSFT', 'NVDA', 'ORCL', 'PLTR', 'VUAG.L', 'ZS', 'IBM']
-    
-    # Dictionary to store ticker and its current price
-    stock_data = {}
-
-    # Fetch stock data for each ticker
-    for ticker in tickers:
-        stock = yf.Ticker(ticker)
-        stock_info = stock.history(period="1d")
-        
-        if not stock_info.empty:
-            # Get the closing price for the last available day
-            stock_price = stock_info['Close'].iloc[-1]
-            stock_data[ticker] = round(stock_price, 2)  # Round price to 2 decimal places
-        else:
-            print(f"Warning: No data found for {ticker}, possibly delisted.")
-    
-    # Define the file path where you want to save the JSON
+# Function to fetch stock price for a single ticker and update the JSON file
+def cache_stock_price(ticker):
+    # Define the file path where the stock data is saved
     file_path = os.path.join(os.getcwd(), 'stock_prices.json')
 
-    # Save the stock data to a .json file
-    with open(file_path, 'w') as json_file:
-        json.dump(stock_data, json_file, indent=4)
+    # Try to load existing stock data from the JSON file, if it exists
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as json_file:
+            stock_data = json.load(json_file)
+    else:
+        stock_data = {}
 
-    print(f"Stock prices saved to {file_path}")
+    # Fetch stock data for the specified ticker
+    stock = yf.Ticker(ticker)
+    stock_info = stock.history(period="1d")
+
+    if not stock_info.empty:
+        # Get the closing price for the last available day
+        stock_price = stock_info['Close'].iloc[-1]
+        stock_data[ticker] = round(stock_price, 2)  # Round price to 2 decimal places
+        
+        # Save the updated stock data back to the JSON file
+        with open(file_path, 'w') as json_file:
+            json.dump(stock_data, json_file, indent=4)
+        
+        print(f"Price for {ticker} updated: {stock_data[ticker]}")
+    else:
+        print(f"Warning: No data found for {ticker}, possibly delisted.")
+
+# Example usage
+cache_stock_price('AAPL')  # This will only update AAPL in the JSON file

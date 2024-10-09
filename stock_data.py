@@ -3,72 +3,41 @@ import pandas as pd
 import yfinance as yf  
 from datetime import datetime  
 
-from wayne_ai import score_investment
+from prepare_data import prepare_investment_data_for_prompt
 
-def prepare_investment_data_for_prompt(historical_df, ticker):
-    if historical_df.empty:
-        st.error("No historical data available to process.")
-        return None
-
-    # Proceed with calculations
-    try:
-        # Current stock price (latest value in the dataframe)
-        current_stock_price = historical_df.iloc[-1]["Price per Share"]
-
-        # Calculate average price paid per share
-        total_value_paid = historical_df.iloc[-1]["Value Paid"]
-        total_shares_held = historical_df.iloc[-1]["Shares Held"]
-        average_price_paid = total_value_paid / total_shares_held if total_shares_held != 0 else 0
-
-        # Percentage change since first purchase
-        initial_price = historical_df.iloc[0]["Price per Share"]
-        
-        profit = (current_stock_price * total_shares_held) - total_value_paid
-        percentage_change = (profit / total_value_paid) * 100 if total_value_paid != 0 else 0
-
-        # Holding duration in years
-        start_date = historical_df.iloc[0]["Date"]
-        end_date = historical_df.iloc[-1]["Date"]
-        holding_duration_years = (end_date - start_date).days / 365
-
-        # Format the data for clarity
-        investment_data = {
-            "Stock Name": ticker,
-            "Current Stock Price": f"${current_stock_price:.2f}",
-            "Average Price Paid per Share": f"${average_price_paid:.2f}",
-            "Percentage Change Since Investment": f"{percentage_change:.2f}%",
-            "Holding Duration (years)": f"{holding_duration_years:.2f} years",
-            "Shares Held": f"{total_shares_held:.2f} shares",
-            "Total Value Invested": f"${total_value_paid:.2f}",
-        }
-
-        # Print formatted output
-        print(f"Investment Data Summary: {investment_data}")
-
-        # Process data (e.g., scoring) and return result
-        scoring_result = score_investment(investment_data)
-        return scoring_result
-
-    except Exception as e:
-        st.error(f"An error occurred while preparing investment data: {e}")
-        return None
-
-# --- End of Function to Get Stock History ---
-
-# --- Function to Get Stock History ---
 def get_stock_history(ticker, transactions_data):
     if not ticker:
         st.error("Ticker symbol is required.")
         return None
 
     # Filter transactions for the given ticker
-    transactions = [t for t in transactions_data if t['Ticker Symbol'] == ticker]
+    transactions = [
+        t for t in transactions_data if t['Ticker Symbol'] == ticker
+    ]
 
     if not transactions:
         st.error("No transactions found for the given ticker.")
         return None
 
-    # Sort transactions by date
+    # Clean and convert transactions data
+    for t in transactions:
+        # Convert 'Date' to datetime object
+        if isinstance(t['Date'], str):
+            t['Date'] = datetime.strptime(t['Date'], '%d-%m-%Y')
+
+        # Remove '$' and commas from 'Price per Share USD' and convert to float
+        price_str = t['Price per Share USD'].replace('$', '').replace(',', '').strip()
+        t['Price per Share USD'] = float(price_str)
+
+        # Convert 'No. of Shares' to float
+        t['No. of Shares'] = float(t['No. of Shares'])
+
+        # Ensure 'Transaction Valuation USD' is a float
+        if isinstance(t['Transaction Valuation USD'], str):
+            valuation_str = t['Transaction Valuation USD'].replace('$', '').replace(',', '').strip()
+            t['Transaction Valuation USD'] = float(valuation_str)
+
+    # Now sort the transactions by date
     transactions.sort(key=lambda x: x["Date"])
 
     # Get the first purchase date and current date
@@ -91,33 +60,54 @@ def get_stock_history(ticker, transactions_data):
     # Initialize cumulative values
     cumulative_shares = 0
     cumulative_value_paid = 0
+    total_trades = 0  # Initialize a counter for total trades
+    last_holding_start = None
+    total_holding_days = 0  # Initialize total holding days
 
-    # Convert transactions to DataFrame and set Date as datetime
+    # Convert transactions to DataFrame
     transactions_df = pd.DataFrame(transactions)
-    transactions_df['Date'] = pd.to_datetime(transactions_df['Date'], format='%d-%m-%Y')
     transactions_df = transactions_df.sort_values('Date')
 
     # Create an iterator over transactions
     transactions_iter = iter(transactions_df.iterrows())
     current_transaction_index, current_transaction = next(transactions_iter, (None, None))
 
+    # Loop through historical prices
     for date, row in historical_prices.iterrows():
         date = date.to_pydatetime().replace(tzinfo=None)
         # Process all transactions up to the current date
         while current_transaction is not None and current_transaction['Date'] <= date:
             transaction_type = current_transaction['Transaction Type']
-            shares = float(current_transaction['No. of Shares'])
-            transaction_amount = float(current_transaction['Transaction Valuation USD'])
+            shares = current_transaction['No. of Shares']
+            transaction_amount = current_transaction['Transaction Valuation USD']
+
             if transaction_type == 'BUY':
+                if cumulative_shares < 0.1:
+                    last_holding_start = current_transaction['Date']
                 cumulative_shares += shares
                 cumulative_value_paid += transaction_amount
+                total_trades += 1  # Increment the trade counter
+
             elif transaction_type == 'SELL':
                 cumulative_shares -= shares
                 cumulative_value_paid -= transaction_amount
-                if cumulative_value_paid < 0:
-                    cumulative_value_paid = 0
+                total_trades += 1  # Increment the trade counter
+
+                # Ensure values don't go below zero
+                cumulative_shares = max(cumulative_shares, 0.00)
+                cumulative_value_paid = max(cumulative_value_paid, 0.00)
+
+                if cumulative_shares == 0 and last_holding_start is not None:
+                    last_holding_end = current_transaction['Date']
+                    holding_period = (last_holding_end - last_holding_start).days
+                    total_holding_days += holding_period
+                    last_holding_start = None  # Reset holding start
+
             # Get the next transaction
-            current_transaction_index, current_transaction = next(transactions_iter, (None, None))
+            try:
+                current_transaction_index, current_transaction = next(transactions_iter)
+            except StopIteration:
+                current_transaction = None
 
         # Get the closing price for the date
         price_per_share = row['Close']
@@ -125,12 +115,26 @@ def get_stock_history(ticker, transactions_data):
         # Calculate current value of holdings
         value = cumulative_shares * price_per_share
 
+        # Ensure value doesn't go below zero
+        value = max(value, 0.00)
+
+        # Calculate years held
+        if last_holding_start is not None:
+            current_holding_days = (date - last_holding_start).days
+            total_days_held = total_holding_days + current_holding_days
+        else:
+            total_days_held = total_holding_days
+
+        years_held = total_days_held / 365.25
+
         historical_values.append({
             "Date": date,
             "Value": value,
             "Value Paid": cumulative_value_paid,
             "Shares Held": cumulative_shares,
-            "Price per Share": price_per_share
+            "Price per Share": price_per_share,
+            "Total Trades": total_trades,
+            "Years Held": years_held
         })
 
     if not historical_values:

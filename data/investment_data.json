@@ -1122,34 +1122,6 @@
     {
         "Transaction Type": "BUY",
         "Date": "08-02-2021",
-        "Time": "14:42",
-        "Ticker Symbol": "PLTR",
-        "No. of Shares": "0.40650826",
-        "Price per Share USD": "$38.72",
-        "Image Filename": "IMG_2094.PNG",
-        "Transaction Valuation USD": 15.7399998272,
-        "Overall Holdings": 0.4065082600000009,
-        "Average Cost per Share USD": 38.71999999999998,
-        "Realized Gain/Loss USD": 0,
-        "Portfolio Valuation USD": 2611.0861878902997
-    },
-    {
-        "Transaction Type": "SELL",
-        "Date": "08-02-2021",
-        "Time": "14:44",
-        "Ticker Symbol": "PLTR",
-        "No. of Shares": "0.40650826",
-        "Price per Share USD": "$37.91",
-        "Image Filename": "IMG_2176.PNG",
-        "Transaction Valuation USD": 15.4107281366,
-        "Overall Holdings": 0.0,
-        "Average Cost per Share USD": 38.71999999999998,
-        "Realized Gain/Loss USD": -0.3292716905999923,
-        "Portfolio Valuation USD": 2595.6754597536997
-    },
-    {
-        "Transaction Type": "BUY",
-        "Date": "08-02-2021",
         "Time": "14:58",
         "Ticker Symbol": "CLNE",
         "No. of Shares": "0.86107921",
@@ -1986,20 +1958,6 @@
         "Average Cost per Share USD": 126.42,
         "Realized Gain/Loss USD": 0,
         "Portfolio Valuation USD": 2028.9588369107992
-    },
-    {
-        "Transaction Type": "BUY",
-        "Date": "25-05-2023",
-        "Time": "15:05",
-        "Ticker Symbol": "PLTR",
-        "No. of Shares": "0.01724137",
-        "Price per Share USD": "$12.76",
-        "Image Filename": "IMG_2125.PNG",
-        "Transaction Valuation USD": 0.21999988119999997,
-        "Overall Holdings": 0.017241370000000887,
-        "Average Cost per Share USD": 12.760000000001336,
-        "Realized Gain/Loss USD": 0,
-        "Portfolio Valuation USD": 2029.1788367919992
     },
     {
         "Transaction Type": "BUY",

@@ -50,8 +50,7 @@ def score_investment(investment_data):
     Current Stock Price: {investment_data['Current Stock Price']},
     Average Price Paid per Share: {investment_data['Average Price Paid per Share']},
     Percentage Change Since Investment: {investment_data['Percentage Change Since Investment']},
-    
-    Orginal Trade Placement (years): {investment_data['Holding Duration (years)']},
+    Held Current amount of shares for: {investment_data['Held current amount for']},
     Shares Held: {investment_data['Shares Held']},
     Total Value Invested: {investment_data['Total Value Invested']}
     
