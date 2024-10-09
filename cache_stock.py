@@ -31,6 +31,3 @@ def cache_stock_prices():
         json.dump(stock_data, json_file, indent=4)
 
     print(f"Stock prices saved to {file_path}")
-
-# Example usage
-save_stock_prices_to_json()
