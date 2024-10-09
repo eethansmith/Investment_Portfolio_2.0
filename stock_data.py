@@ -6,6 +6,10 @@ from datetime import datetime
 from wayne_ai import score_investment
 
 def prepare_investment_data_for_prompt(historical_df, ticker):
+    if historical_df.empty:
+        st.error("No historical data available to process.")
+        return None
+    
     # Stock name (ticker)
     stock_name = ticker
 
@@ -53,6 +57,7 @@ def get_stock_history(ticker, transactions_data):
     if not ticker:
         st.error("Ticker symbol is required.")
         return None
+    
 
     # Filter transactions for the given ticker
     transactions = [t for t in transactions_data if t['Ticker Symbol'] == ticker]
@@ -125,6 +130,10 @@ def get_stock_history(ticker, transactions_data):
             "Shares Held": cumulative_shares,
             "Price per Share": price_per_share
         })
+        
+    if not historical_values:
+        st.error(f"No historical values computed for {ticker}.")
+        return None
 
     # Convert historical_values to DataFrame
     historical_df = pd.DataFrame(historical_values)
