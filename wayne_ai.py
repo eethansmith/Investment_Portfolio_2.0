@@ -44,8 +44,6 @@ def score_investment(investment_data):
     - Stock performance relative to its sector and market.
     - Level of risk/volatility experienced during the investment period.
     - Overall return compared to benchmarks and the investment’s timing.
-
-    ### provide an exact integer score from 0-100 and a brief explanation of why the investment falls within that range. Score must not be a multiple of 10.
     """
 
     # Fetch the company info using yfinance
@@ -63,7 +61,8 @@ def score_investment(investment_data):
     Shares Held: {investment_data['Shares Held']},
     Total Value Invested: {investment_data['Total Value Invested']}
     
-    Score:"""
+    ### provide an exact integer score from 0-100 and a brief explanation of why the investment falls within that range. Score must not be a multiple of 10.
+    Grade:"""
 
     scoring = get_answer(prompt, info)
     return scoring
