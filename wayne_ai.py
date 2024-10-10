@@ -61,8 +61,8 @@ def score_investment(investment_data):
     Shares Held: {investment_data['Shares Held']},
     Total Value Invested: {investment_data['Total Value Invested']}
     
-    ### provide an exact integer score from 0-100 and a brief explanation of why the investment falls within that range. Score must not be a multiple of 10.
-    Grade:"""
+    ### provide an exact integer grade from 0-100 followed by an explanation of why the investment falls within that range. Grade must not be a multiple of 10.
+    Grade: """
 
     scoring = get_answer(prompt, info)
     return scoring
