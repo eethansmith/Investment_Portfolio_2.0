@@ -11,8 +11,8 @@ from stock_data import get_stock_history
 def display_overall_holdings(total_current_value, total_invested_amount, total_profit_loss):
     """Display overall holdings at the top."""
     col1, col2, col3 = st.columns(3)
-    col1.metric("Current Holdings Value", f"${total_current_value:,.2f}")
-    col2.metric("Total Amount Invested", f"${total_invested_amount:,.2f}")
+    col1.metric("Current Holdings Value", f"${total_current_value:,.2f}" if total_current_value else "N/A")
+    col2.metric("Total Amount Invested", f"${total_invested_amount:,.2f}" if total_invested_amount else "N/A")
     if total_profit_loss is not None and total_profit_loss is not None:
         if total_invested_amount != 0:
             total_profit_loss_percent = (total_profit_loss / total_invested_amount) * 100
@@ -120,8 +120,8 @@ def display_stock_details(holdings, transactions_df):
     st.markdown(f"### {selected_name} ({selected_stock})")
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Current Holdings Value", f"${current_value:,.2f}")
-    col2.metric("Total Amount Invested", f"${total_invested:,.2f}")
+    col1.metric("Current Holdings Value", f"${current_value:,.2f}" if current_value else "N/A")
+    col2.metric("Total Amount Invested", f"${total_invested:,.2f}" if total_invested else "N/A")
     if profit is not None and profit_percent is not None:
         col3.metric("Profit/Loss", f"${profit:,.2f}", f"{profit_percent:.2f}%")
     else:
@@ -136,7 +136,7 @@ def display_stock_details(holdings, transactions_df):
     col4.markdown(f"""
         <div style='font-size: {small_font_size}; text-align: center;'>
             <strong>Average Cost per Share</strong><br>
-            {f"${avg_cost_per_share:,.2f}"}
+            {f"${avg_cost_per_share:,.2f}" if avg_cost_per_share else "N/A"}
         </div>
     """, unsafe_allow_html=True)
 
@@ -144,7 +144,7 @@ def display_stock_details(holdings, transactions_df):
     col5.markdown(f"""
         <div style='font-size: {small_font_size}; text-align: center;'>
             <strong>Price per Share</strong><br>
-            {f"${current_price:,.2f}"}
+            {f"${current_price:,.2f}" if current_price else "N/A"}
         </div>
     """, unsafe_allow_html=True)
 
