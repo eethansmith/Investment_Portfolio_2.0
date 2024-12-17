@@ -1,5 +1,4 @@
 from openai import OpenAI
-from dotenv import load_dotenv
 import yfinance as yf
 
 import streamlit as st
